@@ -3,24 +3,16 @@ package com.telegrambot.botoldhouse.Telegram;
 import com.telegrambot.botoldhouse.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,6 +25,12 @@ public class OldHouseBot extends SpringWebhookBot {
     private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
+    int numCurrentMonth = ld.getMonth().getValue();
+    int numNextMonth = ld.plusMonths(1).getMonth().getValue();
+    int numNextMonth2 = ld.plusMonths(2).getMonth().getValue();
+    String currentMonth = monts[ld.getMonth().getValue()];
+    String nextMonth = monts[ld.plusMonths(1).getMonth().getValue()];
+    String nextMonth2 = monts[ld.plusMonths(2).getMonth().getValue()];
 
     @Autowired
     SeanseService seanseService;
@@ -40,6 +38,7 @@ public class OldHouseBot extends SpringWebhookBot {
     @Autowired
     ReplyKeyboardMaker replyKeyboardMaker;
 
+    @Autowired
     MessageHandler messageHandler;
     CallbackQueryHandler callbackQueryHandler;
 
@@ -76,84 +75,39 @@ public class OldHouseBot extends SpringWebhookBot {
         this.botToken = botToken;
     }
 
-    public MessageHandler getMessageHandler() {
-        return messageHandler;
-    }
-
-    public void setMessageHandler(MessageHandler messageHandler) {
-        this.messageHandler = messageHandler;
-    }
-
-    public CallbackQueryHandler getCallbackQueryHandler() {
-        return callbackQueryHandler;
-    }
-
-    public void setCallbackQueryHandler(CallbackQueryHandler callbackQueryHandler) {
-        this.callbackQueryHandler = callbackQueryHandler;
-    }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         try {
-//            return handleUpdate(update);
-//            if (update.hasCallbackQuery()) {
-//
-//            }
+            if (update.hasCallbackQuery()) {
+                String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+                String[] data = update.getCallbackQuery().getData().split(",");
+                int page = Integer.parseInt(data[0]);
+                int month = Integer.parseInt(data[1]);
 
-            String chatId = update.getMessage().getChatId().toString();
-            String inputText = update.getMessage().getText();
-
-            if (inputText == null) {
-                throw new IllegalArgumentException();
-            } else if (inputText.equals("/start")) {
-                SendMessage sendMessage = new SendMessage(chatId, "Афиша на месяц");
-                sendMessage.enableMarkdown(true);
-                sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
-                return sendMessage;
-
-            } else if (inputText.equals(monts[ld.getMonth().getValue()])) {
-
-                List<SendMessage> messageList = seanseService.getByMont(ld.getMonth().getValue(), chatId);
-
-                    for (SendMessage s: messageList){
-                        System.out.println(s);
-                        execute(s);
-                    }
-            } else if (inputText.equals(monts[ld.plusMonths(1).getMonth().getValue()])) {
-
-                List<SendMessage> messageList = seanseService.getByMont(ld.plusMonths(1).getMonth().getValue(), chatId);
-
-                for (SendMessage s: messageList){
-                    System.out.println(s);
+                List<SendMessage> messageList2 = seanseService.getByMontPageble(month, chatId, (page+1));
+                for (SendMessage s: messageList2){
                     execute(s);
                 }
 
+            } else if (update.getMessage() != null && update.getMessage().getText() != null) {
 
-
-
-            } else {
-                return new SendMessage(chatId, "NON_COMMAND_MESSAGE");
+                for (SendMessage sendMessage : messageHandler.answerMessage(update.getMessage())){
+                        execute(sendMessage);
+                    }
             }
+
+
         } catch (IllegalArgumentException e) {
             return new SendMessage(update.getMessage().getChatId().toString(),
-                    "EXCEPTION_ILLEGAL_MESSAGE");
+                    "Попробуйте воспользоваться клавиатурой");
         } catch (Exception e) {
             System.out.println(e);
             return new SendMessage(update.getMessage().getChatId().toString(),
-                    "EXCEPTION_WHAT_THE_FUCK");
+                    "Что то пошло не так");
         }
         return null;
     }
-
-    private BotApiMethod<?> handleUpdate(Update update) throws IOException {
-
-            Message message = update.getMessage();
-            if (message != null)
-            return messageHandler.answerMessage(update.getMessage());
-
-        return null;
-    }
-
 
 
 }

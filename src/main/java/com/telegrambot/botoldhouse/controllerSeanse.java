@@ -28,5 +28,11 @@ public class controllerSeanse {
         return seanseService.getAll();
     }
 
+    @GetMapping ("/db")
+    public String updateDB() throws IOException {
+        seanseService.updateDB();
+        return "updated";
+    }
+
 
 }

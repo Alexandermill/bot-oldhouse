@@ -1,20 +1,20 @@
 package com.telegrambot.botoldhouse;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class SeanseService {
@@ -25,53 +25,116 @@ public class SeanseService {
     @Autowired
     private SeanseRepository seanseRepository;
 
-//
-//    public Iterable<Seanse> addSeansesDB() throws IOException {
-//
-//        return seanseRepository.saveAll(parseToSeanse.getFullAfisha());
-//    }
+    @Autowired
+    private ParseToSeanse parseToSeanse;
+
 
     public Iterable<Seanse> getAll() throws IOException {
-
         return seanseRepository.findAll();
     }
 
-    public List<SendMessage> getByMont(int mont, String chatId){
+    public void updateDB() throws IOException {
+        List<Seanse> seanses = parseToSeanse.getFullAfisha();
+        seanseRepository.deleteAll();
+        seanseRepository.saveAll(seanses);
+    }
+
+
+
+    public List<SendMessage> getByMontPageble(int mont, String chatId, int page){
+        int messageInPage = 4;
         List<SendMessage> messageList = new ArrayList<>();
-        List<Seanse> seanses = seanseRepository.findSeanseByDate(mont);
+        List<Seanse> seanses = seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page-1, messageInPage));
 
-        for (Seanse s : seanses){
+        for (int i=0; i < seanses.size(); i++) {
 
-            String text = (s.getDate().format(dtf)+" "+s.getDate().format(dtfWeekDay)+"\n"
-                    + s.getTime().toString()+"\n"+s.getName()+"\n"+"Продолжительность: "+s.getDurattion());
-            SendMessage sendMessage = new SendMessage(chatId, text);
+            SendMessage sendMessage = seanseToMessage(seanses.get(i));
+            sendMessage.setChatId(chatId);
+
             InlineKeyboardMarkup inlineKeybord = new InlineKeyboardMarkup();
-            InlineKeyboardButton buttonPay = new InlineKeyboardButton("купить билет");
-
-            if (s.getPayLink().isBlank()){
-                buttonPay.setText("нет онлайн билетов");
-                buttonPay.setUrl("https://old-house.ru");
-            } else buttonPay.setUrl(s.getPayLink());
-
-            InlineKeyboardButton buttonLink = new InlineKeyboardButton("на сайт");
-
-            if (s.getWebLink().isBlank()){
-                buttonPay.setUrl("https://old-house.ru");
-            } else buttonLink.setUrl(s.getWebLink());
-
-            buttonLink.setUrl(s.getWebLink());
-            List<InlineKeyboardButton> buttonList = new ArrayList<>();
-            buttonList.add(buttonPay);
-            buttonList.add(buttonLink);
             List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-            rowList.add(buttonList);
+            rowList.add(getPayLinkButtons(seanses.get(i)));
+
             inlineKeybord.setKeyboard(rowList);
             sendMessage.setReplyMarkup(inlineKeybord);
             messageList.add(sendMessage);
-        }
 
-        return messageList;
+            if (i == seanses.size() - 1 & seanses.size() >= messageInPage & !seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page, messageInPage)).isEmpty()) {
+
+                SendMessage nextMessage = new SendMessage(chatId, "нажмите Далее");
+                InlineKeyboardButton buttonNext = new InlineKeyboardButton("Далее >");
+                buttonNext.setCallbackData(String.valueOf(page)+","+String.valueOf(mont));
+                List<InlineKeyboardButton> buttonList2 = new ArrayList<>();
+                buttonList2.add(buttonNext);
+                List<List<InlineKeyboardButton>> rowList2 = new ArrayList<>();
+                rowList2.add(buttonList2);
+                nextMessage.setReplyMarkup(new InlineKeyboardMarkup(rowList2));
+                messageList.add(nextMessage);
+            }
+
+        }
+            return messageList;
     }
+
+    private String getTimeString(String str){
+        String[] arr = str.trim().split("[^\\d]+");
+        if (arr.length != 0) {
+            String result = (arr[0] + ":" + arr[1]);
+            return result;
+        } else return "";
+    }
+
+    private String getEndTime( String duration, LocalTime startTime){
+        String emoji = EmojiParser.parseToUnicode(":frowning:");
+        if (duration == null || duration.equals("")) {
+            return emoji;
+        } else {
+            LocalTime lc = LocalTime.parse(duration, DateTimeFormatter.ofPattern("H:mm"));
+            LocalTime endTime = startTime.plusHours(Long.valueOf(lc.getHour())).plusMinutes(Long.valueOf(lc.getMinute()));
+            return endTime.toString();
+        }
+    }
+
+    private SendMessage seanseToMessage(Seanse seanse){
+        String dur = getTimeString(seanse.getDurattion());
+        String clock = EmojiParser.parseToUnicode("\uD83D\uDD70");
+        String calendar = EmojiParser.parseToUnicode("\uD83D\uDDD3");
+        String text = (
+                calendar + " " + seanse.getDate().format(dtf)
+                + "  " + seanse.getDate().format(dtfWeekDay) + "\n"
+                +clock +" <i> начало </i> "+ seanse.getTime().toString() +"  <i>окончание</i> "+getEndTime(dur,seanse.getTime())
+                + "\n\n" + "<b>"+seanse.getName() +"</b>" + "\n\n"
+                + "Продолжительность: " + dur
+        );
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableHtml(true);
+        sendMessage.setText(text);
+        return sendMessage;
+    }
+
+    private List<InlineKeyboardButton> getPayLinkButtons (Seanse seanse){
+
+        String payemoji = EmojiParser.parseToUnicode("\uD83D\uDCB3");
+        InlineKeyboardButton buttonPay = new InlineKeyboardButton(payemoji+ " купить билет");
+
+        if (seanse.getPayLink().isBlank()) {
+            buttonPay.setText("нет онлайн билетов");
+            buttonPay.setUrl("https://old-house.ru");
+        } else buttonPay.setUrl(seanse.getPayLink());
+
+        InlineKeyboardButton buttonLink = new InlineKeyboardButton("на сайт");
+
+        if (seanse.getWebLink().isBlank()) {
+            buttonPay.setUrl("https://old-house.ru");
+        } else buttonLink.setUrl(seanse.getWebLink());
+
+        List<InlineKeyboardButton> buttonList = new ArrayList<>();
+        buttonList.add(buttonPay);
+        buttonList.add(buttonLink);
+
+        return buttonList;
+    }
+
 
 
 }

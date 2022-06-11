@@ -24,82 +24,66 @@ public class MessageHandler {
     @Autowired
     private ReplyKeyboardMaker replyKeyboardMaker;
 
-    OldHouseBot oldHouseBot;
-
     @Autowired
     private SeanseService seanseService;
 
     private LocalDate ld = LocalDate.now();
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMMM", new Locale("ru"));
-    String montPlus1 = ld.plusMonths(1).format(dtf);
+    private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
+    private int numCurrentMonth = ld.getMonth().getValue();
+    private int numNextMonth = ld.plusMonths(1).getMonth().getValue();
+    private int numNextMonth2 = ld.plusMonths(2).getMonth().getValue();
+    private String currentMonth = monts[ld.getMonth().getValue()];
+    private String nextMonth = monts[ld.plusMonths(1).getMonth().getValue()];
+    private String nextMonth2 = monts[ld.plusMonths(2).getMonth().getValue()];
 
 
-    public BotApiMethod<?> answerMessage(Message message) throws IOException {
+    public List<SendMessage> answerMessage(Message message) throws IOException {
+
         String chatId = message.getChatId().toString();
-
         String inputText = message.getText();
 
         if (inputText == null) {
             throw new IllegalArgumentException();
         } else if (inputText.equals("/start")) {
-            SendMessage sendMessage = new SendMessage(chatId, "Афиша на июнь");
-            sendMessage.enableMarkdown(true);
-            KeyboardRow row1 = new KeyboardRow();
-            row1.add(new KeyboardButton(ld.format(dtf)));
-            row1.add(new KeyboardButton(montPlus1));
+            List<SendMessage> messageList = new ArrayList<>();
+            messageList.add(getStartMessage(chatId));
+            return messageList;
 
+        } else if (inputText.equals(currentMonth)) {
 
-            List<KeyboardRow> keyboard = new ArrayList<>();
-            keyboard.add(row1);
+            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth, chatId, 1);
+            return messageList;
 
-            final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            replyKeyboardMarkup.setSelective(true);
-            replyKeyboardMarkup.setResizeKeyboard(true);
-            replyKeyboardMarkup.setOneTimeKeyboard(false);
-            sendMessage.setReplyMarkup(replyKeyboardMarkup);
-            return sendMessage;
-        } else if (inputText.equals("июня")) {
+        } else if (inputText.equals(nextMonth)) {
 
-            List<SendMessage> messageList = seanseService.getByMont(6, chatId);
+            List<SendMessage> messageList = seanseService.getByMontPageble(numNextMonth, chatId, 1);
+            return messageList;
 
+        } else if (inputText.equals(nextMonth2)) {
 
-            return messageList.get(1);
-
+            List<SendMessage> messageList = seanseService.getByMontPageble(numNextMonth2, chatId, 1);
+            return messageList;
 
         } else {
-            return new SendMessage(chatId, "NON_COMMAND_MESSAGE");
+            List<SendMessage> messageList = new ArrayList<>();
+            messageList.add(new SendMessage(chatId, "Используйте клавиатуру"));
+            return messageList;
         }
+
     }
 
+
+
+
     private SendMessage getStartMessage(String chatId) {
-        SendMessage sendMessage = new SendMessage(chatId, "HELP_MESSAGE");
+        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месц!");
         sendMessage.enableMarkdown(true);
-//        KeyboardRow row1 = new KeyboardRow();
-//        row1.add(new KeyboardButton("Июня"));
-//        row1.add(new KeyboardButton("Июль"));
-//
-//
-//        List<KeyboardRow> keyboard = new ArrayList<>();
-//        keyboard.add(row1);
-//
-//        final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-//        replyKeyboardMarkup.setKeyboard(keyboard);
-//        replyKeyboardMarkup.setSelective(true);
-//        replyKeyboardMarkup.setResizeKeyboard(true);
-//        replyKeyboardMarkup.setOneTimeKeyboard(false);
-//        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
         return sendMessage;
     }
 
-//    private SendMessage getTasksMessage(String chatId) {
-//        SendMessage sendMessage = new SendMessage(chatId, BotMessageEnum.CHOOSE_DICTIONARY_MESSAGE.getMessage());
-//        sendMessage.setReplyMarkup(inlineKeyboardMaker.getInlineMessageButtons(
-//                CallbackDataPartsEnum.TASK_.name(),
-//                dictionaryExcelService.isUserDictionaryExist(chatId)
-//        ));
-//        return sendMessage;
-//    }
 
 
 }
