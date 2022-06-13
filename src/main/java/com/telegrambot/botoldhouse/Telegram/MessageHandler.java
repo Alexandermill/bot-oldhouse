@@ -32,11 +32,12 @@ public class MessageHandler {
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
     private int numCurrentMonth = ld.getMonth().getValue();
-    private int numNextMonth = ld.plusMonths(1).getMonth().getValue();
-    private int numNextMonth2 = ld.plusMonths(2).getMonth().getValue();
     private String currentMonth = monts[ld.getMonth().getValue()];
     private String nextMonth = monts[ld.plusMonths(1).getMonth().getValue()];
     private String nextMonth2 = monts[ld.plusMonths(2).getMonth().getValue()];
+    private String nextMonth3 = monts[ld.plusMonths(3).getMonth().getValue()];
+    private String nextMonth4 = monts[ld.plusMonths(4).getMonth().getValue()];
+    private String nextMonth5 = monts[ld.plusMonths(5).getMonth().getValue()];
 
 
     public List<SendMessage> answerMessage(Message message) throws IOException {
@@ -58,12 +59,27 @@ public class MessageHandler {
 
         } else if (inputText.equals(nextMonth)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numNextMonth, chatId, 1);
+            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+1, chatId, 1);
             return messageList;
 
         } else if (inputText.equals(nextMonth2)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numNextMonth2, chatId, 1);
+            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+2, chatId, 1);
+            return messageList;
+
+        } else if (inputText.equals(nextMonth3)) {
+
+            List<SendMessage> messageList = seanseService.getByMontPageble(9, chatId, 1);
+            return messageList;
+
+        } else if (inputText.equals(nextMonth4)) {
+
+            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+4, chatId, 1);
+            return messageList;
+
+        } else if (inputText.equals(nextMonth5)) {
+
+            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+5, chatId, 1);
             return messageList;
 
         } else {

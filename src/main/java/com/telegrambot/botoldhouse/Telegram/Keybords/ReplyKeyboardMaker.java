@@ -1,5 +1,7 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
+import com.telegrambot.botoldhouse.SeanseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -13,6 +15,10 @@ import java.util.Locale;
 
 @Component
 public class ReplyKeyboardMaker {
+
+    @Autowired
+    SeanseService seanseService;
+
     private LocalDate ld = LocalDate.now();
     private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
@@ -20,12 +26,24 @@ public class ReplyKeyboardMaker {
 
     public ReplyKeyboardMarkup getMainMenuKeyboard() {
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton(monts[ld.getMonth().getValue()]));
-        row1.add(new KeyboardButton(monts[ld.plusMonths(1).getMonth().getValue()]));
-        row1.add(new KeyboardButton(monts[ld.plusMonths(2).getMonth().getValue()]));
+        KeyboardRow row2 = new KeyboardRow();
+
+        for (int i=0; i < 6; i++ ){
+            if (seanseService.seanseExistInMonth(i)){
+                if (i <= 2){
+                    row1.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]));
+                } else row2.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]));
+            }
+        }
+
+
+//        row1.add(new KeyboardButton(monts[ld.getMonth().getValue()]));
+//        row1.add(new KeyboardButton(monts[ld.plusMonths(1).getMonth().getValue()]));
+//        row1.add(new KeyboardButton(monts[ld.plusMonths(2).getMonth().getValue()]));
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row1);
+        keyboard.add(row2);
 
         final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setKeyboard(keyboard);

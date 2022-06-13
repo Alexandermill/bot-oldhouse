@@ -33,6 +33,7 @@ public class SeanseService {
         return seanseRepository.findAll();
     }
 
+
     public void updateDB() throws IOException {
         List<Seanse> seanses = parseToSeanse.getFullAfisha();
         seanseRepository.deleteAll();
@@ -42,14 +43,19 @@ public class SeanseService {
 
 
     public List<SendMessage> getByMontPageble(int mont, String chatId, int page){
-        int messageInPage = 4;
+        int messageInPage = 3;
         List<SendMessage> messageList = new ArrayList<>();
         List<Seanse> seanses = seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page-1, messageInPage));
+        System.out.println(seanses.size());
+        System.out.println(seanses.get(0).getName());
+
+        System.out.println(seanseToMessage(seanses.get(0)).getText());
 
         for (int i=0; i < seanses.size(); i++) {
 
             SendMessage sendMessage = seanseToMessage(seanses.get(i));
             sendMessage.setChatId(chatId);
+            System.out.println(seanses.get(i).getDate());
 
             InlineKeyboardMarkup inlineKeybord = new InlineKeyboardMarkup();
             List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -77,11 +83,14 @@ public class SeanseService {
     }
 
     private String getTimeString(String str){
-        String[] arr = str.trim().split("[^\\d]+");
-        if (arr.length != 0) {
-            String result = (arr[0] + ":" + arr[1]);
-            return result;
+        if (!(str == null || str.equals(""))){
+            String[] arr = str.trim().split("[^\\d]+");
+            if (arr.length != 0) {
+                String result = (arr[0] + ":" + arr[1]);
+                return result;
+            } else return "";
         } else return "";
+
     }
 
     private String getEndTime( String duration, LocalTime startTime){
@@ -133,6 +142,12 @@ public class SeanseService {
         buttonList.add(buttonLink);
 
         return buttonList;
+    }
+
+    public Boolean seanseExistInMonth(int index){
+        if (seanseRepository.findSeanseByDate(ld.plusMonths(index).getMonthValue()).size() != 0){
+            return true;
+        } else return false;
     }
 
 

@@ -91,6 +91,7 @@ public class OldHouseBot extends SpringWebhookBot {
                 }
 
             } else if (update.getMessage() != null && update.getMessage().getText() != null) {
+                System.out.println(update.getMessage().getText());
 
                 for (SendMessage sendMessage : messageHandler.answerMessage(update.getMessage())){
                         execute(sendMessage);

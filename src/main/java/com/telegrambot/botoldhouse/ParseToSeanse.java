@@ -44,7 +44,7 @@ public class ParseToSeanse {
 
             String month = "";
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 6; i++) {
                 LocalDate ld = localDate.plusMonths(i);
                 String jsonStr = getJson(ld);
                 month = ld.format(dtfMonth);
@@ -53,32 +53,42 @@ public class ParseToSeanse {
                 Elements elements = afishaDocument.select("div > h2, li");
                 String dayOfMonth = "";
                 String duration = "";
-                String description = "";
+//                String description = "";
                 for (Element e : elements) {
                     if (e.select("h4").size() == 0) {
                         dayOfMonth = "";
                         dayOfMonth = e.select("span").text();
                     } else {
                         Document aboutSeanse = Jsoup.connect(root + "/" + e.select("h4 > a").attr("href").substring(1)).get();
-                        duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
-                        description = aboutSeanse.select("p[style]").text();
+                        if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
+                            duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
+                        } else duration = "";
+//                        description = aboutSeanse.select("p[style]").text();
 
                         String datestr = (dayOfMonth + " "+ month+" "+ ld.getYear());
-                        LocalDate date = LocalDate.parse(datestr, DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("ru")));
-                        LocalTime time = LocalTime.parse(e.select("h3").text(), DateTimeFormatter.ofPattern("HH:mm"));
+                        LocalDate date = null;
+                        LocalTime time = null;
+
+                        if (datestr != null & datestr !="") {
+                            date = LocalDate.parse(datestr, DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("ru")));
+                        }
+
+                        if (e.select("h3").text() != null & e.select("h3").text() != "") {
+                            time = LocalTime.parse(e.select("h3").text(), DateTimeFormatter.ofPattern("HH:mm"));
+                        }
+
                         String name = (e.select("h4 > a, p").text());
                         String payLink = (e.select("a").attr("data-src"));
                         String webLink = (root + "/" + e.select("h4 > a").attr("href").substring(1));
-                        String desc = description.substring(0, description.indexOf('.', 200) + 1);
+//                        String desc = description.substring(0, description.indexOf('.', 200) + 1);  // краткое описание - несколько предложений
 
-                        Seanse seanse = new Seanse(date, time, name, desc, duration, payLink, webLink);
+                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink);
                         seanses.add(seanse);
 
                     }
                 }
             }
 
-        seanses.forEach(s -> System.out.println(s.getName() +", "+ s.getDate()));
             return seanses;
             // сделать валидацию: на входе всех парсов (jsoup, localdate & time) = notnull + try catch?
         // сделать валидацию на входе bufferedreader = notnull, trow ParseExeption
