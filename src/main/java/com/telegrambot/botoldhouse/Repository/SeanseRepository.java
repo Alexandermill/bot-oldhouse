@@ -1,4 +1,4 @@
-package com.telegrambot.botoldhouse;
+package com.telegrambot.botoldhouse.Repository;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
 import org.springframework.data.domain.PageRequest;

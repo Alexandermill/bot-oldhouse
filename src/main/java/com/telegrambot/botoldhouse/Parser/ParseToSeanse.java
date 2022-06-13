@@ -1,4 +1,4 @@
-package com.telegrambot.botoldhouse;
+package com.telegrambot.botoldhouse.Parser;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
 import org.apache.commons.lang3.StringEscapeUtils;

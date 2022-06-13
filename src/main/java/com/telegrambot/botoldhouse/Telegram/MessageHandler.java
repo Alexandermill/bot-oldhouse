@@ -1,15 +1,11 @@
 package com.telegrambot.botoldhouse.Telegram;
 
-import com.telegrambot.botoldhouse.SeanseService;
+import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.io.IOException;
 import java.time.LocalDate;

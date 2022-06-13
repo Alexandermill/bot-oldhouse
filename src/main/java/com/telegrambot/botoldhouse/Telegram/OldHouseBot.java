@@ -1,16 +1,14 @@
 package com.telegrambot.botoldhouse.Telegram;
 
-import com.telegrambot.botoldhouse.SeanseService;
+import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

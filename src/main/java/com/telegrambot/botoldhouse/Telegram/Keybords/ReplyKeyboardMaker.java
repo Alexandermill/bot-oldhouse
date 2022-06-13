@@ -1,6 +1,6 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
-import com.telegrambot.botoldhouse.SeanseService;
+import com.telegrambot.botoldhouse.Service.SeanseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
