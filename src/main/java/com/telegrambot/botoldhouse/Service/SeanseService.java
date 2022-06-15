@@ -5,6 +5,7 @@ import com.telegrambot.botoldhouse.Repository.SeanseRepository;
 import com.telegrambot.botoldhouse.Telegram.Keybords.InlineKeybords;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -63,15 +64,25 @@ public class SeanseService {
     Нужен для получения Продолжительности в формате HH:MM
     На сайте продолжительность могут написать как угодно
      */
-    private String getTimeString(String str){
-        if (!(str == null || str.equals(""))){
+    public String getTimeString(String str) {
+        if (!(str == null || str.equals(""))) {
+
             String[] arr = str.trim().split("[^\\d]+");
-            if (arr.length != 0) {
+
+            if (arr.length > 1) {
                 String result = (arr[0] + ":" + arr[1]);
                 return result;
-            } else return "";
-        } else return "";
-
+            } else if (arr.length == 1 & str.contains("минут")) {
+                if (Integer.parseInt(arr[0]) >= 60) {
+                    int minutes = Integer.parseInt(arr[0]) % 60;
+                    int hours = Integer.parseInt(arr[0]) / 60;
+                    return (Integer.toString(hours) + ":" + Integer.toString(minutes));
+                } else return ("0:" + arr[0]);
+            } else if (arr.length == 1 & str.contains("час")) {
+                return (arr[0] + ":00");
+            }
+        }
+        return "";
     }
 
     private String getEndTime( String duration, LocalTime startTime){
@@ -79,7 +90,7 @@ public class SeanseService {
         if (duration == null || duration.equals("")) {
             return emoji;
         } else {
-            LocalTime lc = LocalTime.parse(duration, DateTimeFormatter.ofPattern("H:mm"));
+            LocalTime lc = LocalTime.parse(duration, DateTimeFormatter.ofPattern("H:m"));
             LocalTime endTime = startTime.plusHours(Long.valueOf(lc.getHour())).plusMinutes(Long.valueOf(lc.getMinute()));
             return endTime.toString();
         }
