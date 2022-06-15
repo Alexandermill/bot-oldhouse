@@ -1,7 +1,9 @@
 package com.telegrambot.botoldhouse.Telegram;
 
+
 import com.telegrambot.botoldhouse.Service.SeanseService;
-import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -9,35 +11,24 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 
 public class OldHouseBot extends SpringWebhookBot {
+
+    static Logger userLogger = LoggerFactory.getLogger("telegram_bot");
+    public static Logger logger = LoggerFactory.getLogger(OldHouseBot.class);
+
     private String botPath;
     private String botUsername;
     private String botToken;
-    private LocalDate ld = LocalDate.now();
-    private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
-            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
-    int numCurrentMonth = ld.getMonth().getValue();
-    int numNextMonth = ld.plusMonths(1).getMonth().getValue();
-    int numNextMonth2 = ld.plusMonths(2).getMonth().getValue();
-    String currentMonth = monts[ld.getMonth().getValue()];
-    String nextMonth = monts[ld.plusMonths(1).getMonth().getValue()];
-    String nextMonth2 = monts[ld.plusMonths(2).getMonth().getValue()];
 
     @Autowired
     SeanseService seanseService;
 
     @Autowired
-    ReplyKeyboardMaker replyKeyboardMaker;
-
-    @Autowired
     MessageHandler messageHandler;
+//    @Autowired
     CallbackQueryHandler callbackQueryHandler;
 
     public OldHouseBot(SetWebhook setWebhook, MessageHandler messageHandler,CallbackQueryHandler callbackQueryHandler) {
@@ -78,10 +69,17 @@ public class OldHouseBot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         try {
             if (update.hasCallbackQuery()) {
+
+                userLogger.debug("User {}, {}, нажал кнопку {}", update.getCallbackQuery().getMessage().getChatId(),
+                        update.getCallbackQuery().getMessage().getChat().getFirstName(),
+                        update.getCallbackQuery().getMessage().getReplyMarkup().getKeyboard().get(0).get(0).getText());
+
+
+
                 String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-                String[] data = update.getCallbackQuery().getData().split(",");
-                int page = Integer.parseInt(data[0]);
-                int month = Integer.parseInt(data[1]);
+                String[] arrData = update.getCallbackQuery().getData().split(",");
+                int page = Integer.parseInt(arrData[0]);
+                int month = Integer.parseInt(arrData[1]);
 
                 List<SendMessage> messageList2 = seanseService.getByMontPageble(month, chatId, (page+1));
                 for (SendMessage s: messageList2){
@@ -89,7 +87,6 @@ public class OldHouseBot extends SpringWebhookBot {
                 }
 
             } else if (update.getMessage() != null && update.getMessage().getText() != null) {
-                System.out.println(update.getMessage().getText());
 
                 for (SendMessage sendMessage : messageHandler.answerMessage(update.getMessage())){
                         execute(sendMessage);
@@ -98,10 +95,11 @@ public class OldHouseBot extends SpringWebhookBot {
 
 
         } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
             return new SendMessage(update.getMessage().getChatId().toString(),
                     "Попробуйте воспользоваться клавиатурой");
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error(e.getMessage());
             return new SendMessage(update.getMessage().getChatId().toString(),
                     "Что то пошло не так");
         }

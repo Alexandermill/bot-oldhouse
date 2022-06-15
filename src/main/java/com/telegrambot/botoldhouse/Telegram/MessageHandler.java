@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.userLogger;
+
 @Component
 public class MessageHandler {
 
@@ -41,9 +43,16 @@ public class MessageHandler {
         String chatId = message.getChatId().toString();
         String inputText = message.getText();
 
+        userLogger.debug("User {}, {}, {} ввел {}",
+                message.getChatId(),
+                message.getChat().getFirstName(),
+                message.getChat().getLastName(),
+                message.getText());
+
         if (inputText == null) {
             throw new IllegalArgumentException();
         } else if (inputText.equals("/start")) {
+
             List<SendMessage> messageList = new ArrayList<>();
             messageList.add(getStartMessage(chatId));
             return messageList;

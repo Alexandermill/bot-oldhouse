@@ -21,5 +21,14 @@ public class CallbackQueryHandler {
             return null;
         }
 
+    public String getNextPage (CallbackQuery callbackQuery){
+        if (callbackQuery.getMessage().getReplyMarkup().getKeyboard().get(0).get(0).getText().equals("Далее >")){
+            String data = callbackQuery.getData();
+            return data;
+        }
+        return null;
+
+    }
+
 
 }

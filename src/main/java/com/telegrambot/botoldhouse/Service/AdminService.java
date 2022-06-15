@@ -4,6 +4,7 @@ import com.telegrambot.botoldhouse.Entity.Seanse;
 import com.telegrambot.botoldhouse.Parser.ParseToSeanse;
 import com.telegrambot.botoldhouse.Repository.SeanseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,14 +18,13 @@ public class AdminService {
     @Autowired
     private ParseToSeanse parseToSeanse;
 
-    public Iterable<Seanse> getAll() throws IOException {  //потом убрать
+    public Iterable<Seanse> getAll() throws IOException {
         return seanseRepository.findAll();
     }
 
 
-
-
-    public void updateDB() throws IOException {     // потом перенести в какой то другой класс
+    @Scheduled(cron = "${interval-in-cron}")
+    public void updateDB() throws IOException {
         List<Seanse> seanses = parseToSeanse.getFullAfisha();
         seanseRepository.deleteAll();
         seanseRepository.saveAll(seanses);

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.logger;
+
 @Component
 public class ParseToSeanse {
 
@@ -33,9 +35,6 @@ public class ParseToSeanse {
     String root = "https://old-house.ru";
     String jsonStr;
     List<Seanse> seanses = new ArrayList<>();
-
-
-
 
 
     URL url = null;
@@ -127,8 +126,7 @@ public class ParseToSeanse {
             http.disconnect();
 
         } catch (Exception e) {
-            System.out.println("ошибко: ==== \n"+e.getMessage() + "\n конец ошибко");
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return jsonStr;
     }

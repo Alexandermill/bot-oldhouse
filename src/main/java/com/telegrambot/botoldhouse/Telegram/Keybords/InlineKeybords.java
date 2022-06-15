@@ -27,7 +27,10 @@ public class InlineKeybords {
 
         if (seanse.getWebLink().isBlank()) {
             buttonPay.setUrl("https://old-house.ru");
-        } else buttonLink.setUrl(seanse.getWebLink());
+        } else {
+            buttonLink.setUrl(seanse.getWebLink());
+//            buttonLink.setCallbackData("на сайт на спектакле " + seanse.getName());
+        }
 
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
         buttonList.add(buttonPay);
