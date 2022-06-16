@@ -39,7 +39,7 @@ public class controllerSeanse {
 
     @GetMapping ("/seanse")
     public Iterable<Seanse> getall(@RequestParam int mont, @RequestParam int page) throws IOException {
-        return seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page, 4));
+        return seanseRepository.findSeansesByMontPageble(mont, PageRequest.of(page, 4));
     }
 
     @GetMapping ("/db")

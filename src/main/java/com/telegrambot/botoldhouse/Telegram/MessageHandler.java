@@ -38,7 +38,7 @@ public class MessageHandler {
     private String nextMonth5 = monts[ld.plusMonths(5).getMonth().getValue()];
 
 
-    public List<SendMessage> answerMessage(Message message) throws IOException {
+    public SendMessage answerMessage(Message message) throws IOException {
 
         String chatId = message.getChatId().toString();
         String inputText = message.getText();
@@ -53,53 +53,50 @@ public class MessageHandler {
             throw new IllegalArgumentException();
         } else if (inputText.equals("/start")) {
 
-            List<SendMessage> messageList = new ArrayList<>();
-            messageList.add(getStartMessage(chatId));
-            return messageList;
+            SendMessage sendMessage = new SendMessage();
+            sendMessage = getStartMessage(chatId);
+            return sendMessage;
 
         } else if (inputText.equals(currentMonth)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth, chatId, 1);
-            return messageList;
+            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth, chatId, 0);
+            return sendMessage;
 
         } else if (inputText.equals(nextMonth)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+1, chatId, 1);
-            return messageList;
+            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+1, chatId, 0);
+            return sendMessage;
 
         } else if (inputText.equals(nextMonth2)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+2, chatId, 1);
-            return messageList;
+            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+2, chatId, 0);
+            return sendMessage;
 
         } else if (inputText.equals(nextMonth3)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(9, chatId, 1);
-            return messageList;
+            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+3, chatId, 0);
+            return sendMessage;
 
         } else if (inputText.equals(nextMonth4)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+4, chatId, 1);
-            return messageList;
+            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+4, chatId, 0);
+            return sendMessage;
 
         } else if (inputText.equals(nextMonth5)) {
 
-            List<SendMessage> messageList = seanseService.getByMontPageble(numCurrentMonth+5, chatId, 1);
+            SendMessage messageList = seanseService.getByMontPageble(numCurrentMonth+5, chatId, 1);
             return messageList;
 
         } else {
-            List<SendMessage> messageList = new ArrayList<>();
-            messageList.add(new SendMessage(chatId, "Используйте клавиатуру"));
+            SendMessage messageList = new SendMessage(chatId, "Используйте клавиатуру");
             return messageList;
         }
 
     }
 
 
-
-
     private SendMessage getStartMessage(String chatId) {
-        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месц!");
+        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месяц!");
         sendMessage.enableMarkdown(true);
         sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
         return sendMessage;

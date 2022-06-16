@@ -11,8 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
-
 
 public class OldHouseBot extends SpringWebhookBot {
 
@@ -68,7 +66,7 @@ public class OldHouseBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         try {
-            if (update.hasCallbackQuery()) {
+            if (update.hasCallbackQuery() && !update.getCallbackQuery().getData().equals("null")) {
 
                 userLogger.debug("User {}, {}, нажал кнопку {}", update.getCallbackQuery().getMessage().getChatId(),
                         update.getCallbackQuery().getMessage().getChat().getFirstName(),
@@ -80,17 +78,20 @@ public class OldHouseBot extends SpringWebhookBot {
                 String[] arrData = update.getCallbackQuery().getData().split(",");
                 int page = Integer.parseInt(arrData[0]);
                 int month = Integer.parseInt(arrData[1]);
+                Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
 
-                List<SendMessage> messageList2 = seanseService.getByMontPageble(month, chatId, (page+1));
-                for (SendMessage s: messageList2){
-                    execute(s);
-                }
+                SendMessage sendMessage = seanseService.getByMontPageble( month,  chatId, page);
+
+
+
+
+                    execute(seanseService.getEditMessage(month, page, chatId, messageId));
+
 
             } else if (update.getMessage() != null && update.getMessage().getText() != null) {
 
-                for (SendMessage sendMessage : messageHandler.answerMessage(update.getMessage())){
-                        execute(sendMessage);
-                    }
+                execute(messageHandler.answerMessage(update.getMessage()));
+
             }
 
 
