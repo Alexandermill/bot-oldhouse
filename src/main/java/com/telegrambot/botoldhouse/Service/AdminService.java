@@ -1,8 +1,10 @@
 package com.telegrambot.botoldhouse.Service;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
+import com.telegrambot.botoldhouse.Entity.UserBot;
 import com.telegrambot.botoldhouse.Parser.ParseToSeanse;
 import com.telegrambot.botoldhouse.Repository.SeanseRepository;
+import com.telegrambot.botoldhouse.Repository.UserBotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,24 @@ public class AdminService {
     private SeanseRepository seanseRepository;
 
     @Autowired
+    private UserBotRepository userBotRepository;
+
+    @Autowired
     private ParseToSeanse parseToSeanse;
 
     public Iterable<Seanse> getAll() throws IOException {
         return seanseRepository.findAll();
+    }
+
+    public Iterable<UserBot> getUsers() throws IOException {
+        return userBotRepository.findAll();
+    }
+
+    public void saveUser (String chatId, String firstName){
+        if (userBotRepository.findByChatId(chatId) == null){
+            UserBot userBot = new UserBot(chatId, firstName);
+            userBotRepository.save(userBot);
+        }
     }
 
 

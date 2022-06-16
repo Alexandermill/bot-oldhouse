@@ -1,7 +1,9 @@
 package com.telegrambot.botoldhouse.Telegram;
 
+import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
+import org.hibernate.boot.spi.AbstractDelegatingMetadataBuilderImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,6 +26,9 @@ public class MessageHandler {
 
     @Autowired
     private SeanseService seanseService;
+
+    @Autowired
+    private AdminService adminService;
 
     private LocalDate ld = LocalDate.now();
     private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
@@ -48,6 +53,8 @@ public class MessageHandler {
                 message.getChat().getFirstName(),
                 message.getChat().getLastName(),
                 message.getText());
+
+        adminService.saveUser(String.valueOf(message.getChatId()), message.getChat().getFirstName());
 
         if (inputText == null) {
             throw new IllegalArgumentException();
