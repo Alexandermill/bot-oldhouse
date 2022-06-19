@@ -1,6 +1,7 @@
 package com.telegrambot.botoldhouse;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
+import com.telegrambot.botoldhouse.Entity.UserBot;
 import com.telegrambot.botoldhouse.Repository.SeanseRepository;
 import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.SeanseService;
@@ -37,9 +38,14 @@ public class controllerSeanse {
         return adminService.getAll();
     }
 
+    @GetMapping ("/users")
+    public Iterable<UserBot> getUsers() throws IOException {
+        return adminService.getUsers();
+    }
+
     @GetMapping ("/seanse")
     public Iterable<Seanse> getall(@RequestParam int mont, @RequestParam int page) throws IOException {
-        return seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page, 4));
+        return seanseRepository.findSeansesByMontPageble(mont, PageRequest.of(page, 4));
     }
 
     @GetMapping ("/db")

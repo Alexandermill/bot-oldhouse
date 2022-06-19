@@ -52,7 +52,7 @@ public class ParseToSeanse {
                 Elements elements = afishaDocument.select("div > h2, li");
                 String dayOfMonth = "";
                 String duration = "";
-//                String description = "";
+                String description = "";
                 for (Element e : elements) {
                     if (e.select("h4").size() == 0) {
                         dayOfMonth = "";
@@ -62,7 +62,7 @@ public class ParseToSeanse {
                         if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
                             duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
                         } else duration = "";
-//                        description = aboutSeanse.select("p[style]").text();
+                        description = aboutSeanse.select("p[style]").text();
 
                         String datestr = (dayOfMonth + " "+ month+" "+ ld.getYear());
                         LocalDate date = null;
@@ -79,9 +79,9 @@ public class ParseToSeanse {
                         String name = (e.select("h4 > a, p").text());
                         String payLink = (e.select("a").attr("data-src"));
                         String webLink = (root + "/" + e.select("h4 > a").attr("href").substring(1));
-//                        String desc = description.substring(0, description.indexOf('.', 200) + 1);  // краткое описание - несколько предложений
+                        String desc = description.substring(0, description.indexOf('.', 200) + 1);  // краткое описание - несколько предложений
 
-                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink);
+                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, desc);
                         seanses.add(seanse);
 
                     }
@@ -89,12 +89,6 @@ public class ParseToSeanse {
             }
 
             return seanses;
-            // сделать валидацию: на входе всех парсов (jsoup, localdate & time) = notnull + try catch?
-        // сделать валидацию на входе bufferedreader = notnull, trow ParseExeption
-        // try catch на весь метод ?
-
-
-
 
     }
 

@@ -3,7 +3,6 @@ package com.telegrambot.botoldhouse.Telegram.Keybords;
 import com.telegrambot.botoldhouse.Entity.Seanse;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -13,28 +12,29 @@ import java.util.List;
 @Component
 public class InlineKeybords {
 
-    public InlineKeyboardMarkup getPayLinkButtons (Seanse seanse){
+    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next){
 
-        String payemoji = EmojiParser.parseToUnicode("\uD83D\uDCB3");
-        InlineKeyboardButton buttonPay = new InlineKeyboardButton(payemoji+ " купить билет");
 
-        if (seanse.getPayLink().isBlank()) {
-            buttonPay.setText("нет онлайн билетов");
-            buttonPay.setUrl("https://old-house.ru");
-        } else buttonPay.setUrl(seanse.getPayLink());
 
-        InlineKeyboardButton buttonLink = new InlineKeyboardButton("на сайт");
+        InlineKeyboardButton buttonNext = new InlineKeyboardButton();
+        InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
+        InlineKeyboardButton buttonNull = new InlineKeyboardButton("   ");
+        buttonNull.setCallbackData("null");
 
-        if (seanse.getWebLink().isBlank()) {
-            buttonPay.setUrl("https://old-house.ru");
-        } else {
-            buttonLink.setUrl(seanse.getWebLink());
-//            buttonLink.setCallbackData("на сайт на спектакле " + seanse.getName());
-        }
+
 
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
-        buttonList.add(buttonPay);
-        buttonList.add(buttonLink);
+        if (page != 0) {
+            buttonPrevios.setText(" < " + page);
+            buttonPrevios.setCallbackData(String.valueOf(page -1 )+","+String.valueOf(month));
+            buttonList.add(buttonPrevios);
+        } else buttonList.add(buttonNull);
+
+        if (next) {
+            buttonNext.setText((page+2) + " > ");
+            buttonNext.setCallbackData(String.valueOf(page +1 )+","+String.valueOf(month));
+            buttonList.add(buttonNext);
+        } else buttonList.add(buttonNull);
 
         InlineKeyboardMarkup inlineKeybord = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

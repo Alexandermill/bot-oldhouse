@@ -14,7 +14,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>${DEV_HOME}/archived/debug.%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>${DEV_HOME}/archived/debug.%d{yyyy-MM-dd, Asia/Novosibirsk}.%i.log
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -29,7 +29,7 @@
         <file>${DEV_HOME}/users.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+                %d{yyyy-MM-dd HH:mm:ss, Asia/Novosibirsk} - %msg%n
             </Pattern>
         </encoder>
 
@@ -59,8 +59,8 @@
         <appender-ref ref="FILE-USER" />
     </logger>
 
-    <root level="warn">
-        <appender-ref ref="FILE-AUDIT" />
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
     </root>
 
 </configuration>

@@ -5,14 +5,15 @@ import com.telegrambot.botoldhouse.Repository.SeanseRepository;
 import com.telegrambot.botoldhouse.Telegram.Keybords.InlineKeybords;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,6 +22,7 @@ public class SeanseService {
     private LocalDate ld = LocalDate.now();
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMMM", new Locale("ru"));
     private DateTimeFormatter dtfWeekDay = DateTimeFormatter.ofPattern("EEEE", new Locale("ru"));
+    private DateTimeFormatter Hmm = DateTimeFormatter.ofPattern("H:mm", new Locale("ru"));
 
     @Autowired
     private SeanseRepository seanseRepository;
@@ -29,26 +31,19 @@ public class SeanseService {
     private InlineKeybords inlineKeybords;
 
 
-    public List<SendMessage> getByMontPageble(int mont, String chatId, int page){
-        int messageInPage = 3;
-        List<SendMessage> messageList = new ArrayList<>();
-        List<Seanse> seanses = seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page-1, messageInPage));
+    public SendMessage getByMontPageble(int month, String chatId, int page){
+        SendMessage sendMessage = new SendMessage();
+        int messageInPage = 1;
+        List<Seanse> seanses = seanseRepository.findSeansesByMontPageble(month, PageRequest.of(page, messageInPage));
 
         for (int i=0; i < seanses.size(); i++) {
 
-            SendMessage sendMessage = seanseToMessage(seanses.get(i));
+            sendMessage = seanseToMessage(seanses.get(i), page);
             sendMessage.setChatId(chatId);
-            sendMessage.setReplyMarkup(inlineKeybords.getPayLinkButtons(seanses.get(i)));
-            messageList.add(sendMessage);
+            sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanses.get(i), page, month, ifNotfinalPage(month, page)));
 
-            if (i == seanses.size() - 1 & seanses.size() >= messageInPage & !seanseRepository.findSeanseByMontPageble(mont, PageRequest.of(page, messageInPage)).isEmpty()) {
-
-                SendMessage nextMessage = new SendMessage(chatId, "нажмите Далее");
-                nextMessage.setReplyMarkup(inlineKeybords.getNextButton(mont, page));
-                messageList.add(nextMessage);
-            }
         }
-            return messageList;
+            return sendMessage;
     }
 
     /*
@@ -85,31 +80,78 @@ public class SeanseService {
         return "";
     }
 
+    private boolean ifNotfinalPage(int month, int page){
+
+        boolean next = false;
+        if (!seanseRepository.findSeansesByMontPageble(month, PageRequest.of(page+1, 1)).isEmpty()){
+            next = true;
+        }
+        return next;
+    }
+
+    public EditMessageText getEditMessage(int month, int page, String chatId, Integer messageId){
+        Seanse seanse = seanseRepository.findSeanseByMontPageble(month, PageRequest.of(page, 1));
+        EditMessageText editMessageText = new EditMessageText();
+        SendMessage sendMessage = getByMontPageble(month,  chatId, page);
+        editMessageText.enableHtml(true);
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(sendMessage.getText());
+        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month, ifNotfinalPage(month, page)));
+        editMessageText.disableWebPagePreview();
+
+        return editMessageText;
+    }
+
     private String getEndTime( String duration, LocalTime startTime){
         String emoji = EmojiParser.parseToUnicode(":frowning:");
         if (duration == null || duration.equals("")) {
             return emoji;
         } else {
-            LocalTime lc = LocalTime.parse(duration, DateTimeFormatter.ofPattern("H:m"));
-            LocalTime endTime = startTime.plusHours(Long.valueOf(lc.getHour())).plusMinutes(Long.valueOf(lc.getMinute()));
+            LocalTime lt = LocalTime.parse(duration, DateTimeFormatter.ofPattern("H:m"));
+            LocalTime endTime = startTime.plusHours(Long.valueOf(lt.getHour())).plusMinutes(Long.valueOf(lt.getMinute()));
             return endTime.toString();
         }
     }
 
-    private SendMessage seanseToMessage(Seanse seanse){
+    private SendMessage seanseToMessage(Seanse seanse, int page){
         String dur = getTimeString(seanse.getDurattion());
         String clock = EmojiParser.parseToUnicode("\uD83D\uDD70");
         String calendar = EmojiParser.parseToUnicode("\uD83D\uDDD3");
+        String payemoji = EmojiParser.parseToUnicode("\uD83D\uDCB3");
+        page = page+1;
+        String webLink;
+        String pay;
+        String palLink;
+        if (seanse.getPayLink().isBlank()) {
+            pay = "нет онлайн билетов";
+            palLink = "";
+        } else {
+            pay = "купить билет";
+            palLink = seanse.getPayLink();
+        }
+
+        if (seanse.getPayLink().isBlank()) {
+            webLink = "https://old-house.ru";
+        } else {
+            webLink = seanse.getWebLink();
+        }
+
         String text = (
-                calendar + " " + seanse.getDate().format(dtf)
-                + "  " + seanse.getDate().format(dtfWeekDay) + "\n"
+                "#"+page+"     "+calendar + " " + "<b>"+ seanse.getDate().format(dtf)+"</b>"
+                + "  " + seanse.getDate().format(dtfWeekDay) + "\n\n"
                 +clock +" <i> начало </i> "+ seanse.getTime().toString() +"  <i>окончание</i> "+getEndTime(dur,seanse.getTime())
-                + "\n\n" + "<b>"+seanse.getName() +"</b>" + "\n\n"
-                + "Продолжительность: " + dur
+                + "\n\n" + "Спектакль: " + "<b>"+seanse.getName() +"</b>"  + "\n\n"
+                + "Продолжительность: " + dur+"\n\n" + payemoji
+                +" <a href=\"" + palLink + "\">"+ pay + "</a>" + "       " + "<a href=\"" + webLink + "\">на сайт</a>"+"\n\n"
+                + "Описание: \n"
+                + seanse.getDescription()
+
         );
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableHtml(true);
         sendMessage.setText(text);
+        sendMessage.disableWebPagePreview();
         return sendMessage;
     }
 

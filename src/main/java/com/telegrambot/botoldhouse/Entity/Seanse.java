@@ -15,8 +15,8 @@ public class Seanse {
     LocalDate date;
     LocalTime time;
     String name;
-//    @Column(length = 500)
-//    String description;
+    @Column(length = 700)
+    String description;
     String durattion;
     String payLink;
     String webLink;
@@ -25,11 +25,11 @@ public class Seanse {
     public Seanse() {
     }
 
-    public Seanse(LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink) {
+    public Seanse(LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink, String description) {
         this.date = date;
         this.time = time;
         this.name = name;
-//        this.description = description;
+        this.description = description;
         this.durattion = durattion;
         this.payLink = payLink;
         this.webLink = webLink;
@@ -59,13 +59,13 @@ public class Seanse {
         this.name = name;
     }
 
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getDurattion() {
         return durattion;
