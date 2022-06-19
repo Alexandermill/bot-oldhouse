@@ -10,13 +10,13 @@ import java.util.List;
 public interface SeanseRepository extends CrudRepository<Seanse, Long> {
 
     @Query(value = "SELECT * FROM SEANSE WHERE MONTH(date) = ?1", nativeQuery = true)
-    public List<Seanse> findSeanseByDate(int mounth);
+    public List<Seanse> findSeanseByMonth(int month);
 
     @Query(value = "SELECT * FROM SEANSE WHERE MONTH(date) = ?1", nativeQuery = true)
-    public List<Seanse> findSeansesByMontPageble(int mounth, PageRequest pageable);
+    public List<Seanse> findSeansesByMontPageble(int month, PageRequest pageable);
 
     @Query(value = "SELECT * FROM SEANSE WHERE MONTH(date) = ?1", nativeQuery = true)
-    public Seanse findSeanseByMontPageble(int mounth, PageRequest pageable);
+    public Seanse findSeanseByMontPageble(int month, PageRequest pageable);
 
 }
 

@@ -23,6 +23,9 @@ public class AdminService {
     @Autowired
     private ParseToSeanse parseToSeanse;
 
+    @Autowired
+    private ExistSeanse existSeanse;
+
     public Iterable<Seanse> getAll() throws IOException {
         return seanseRepository.findAll();
     }
@@ -44,5 +47,6 @@ public class AdminService {
         List<Seanse> seanses = parseToSeanse.getFullAfisha();
         seanseRepository.deleteAll();
         seanseRepository.saveAll(seanses);
+        existSeanse.getExistSeansesFromDB();
     }
 }

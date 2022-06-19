@@ -1,6 +1,7 @@
 package com.telegrambot.botoldhouse.Telegram;
 
 import com.telegrambot.botoldhouse.Service.AdminService;
+import com.telegrambot.botoldhouse.Service.ExistSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class MessageHandler {
 
     @Autowired
     private SeanseService seanseService;
+
+    @Autowired
+    private ExistSeanse existSeanse;
 
     @Autowired
     private AdminService adminService;
@@ -62,8 +66,10 @@ public class MessageHandler {
             sendMessage = getStartMessage(chatId);
             return sendMessage;
 
-        } else if (inputText.equals(currentMonth) | inputText.equals(nextMonth) | inputText.equals(nextMonth2)
-                    | inputText.equals(nextMonth3) | inputText.equals(nextMonth4) | inputText.equals(nextMonth5)) {
+//             | inputText.equals(nextMonth) | inputText.equals(nextMonth2)
+//                    | inputText.equals(nextMonth3) | inputText.equals(nextMonth4) | inputText.equals(nextMonth5)
+
+        } else if (existSeanse.ifExistByMonth(inputText)) {
 
             SendMessage sendMessage = seanseService.getByMontPageble(monthTonum(inputText), chatId, 0);
             return sendMessage;

@@ -1,5 +1,6 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
+import com.telegrambot.botoldhouse.Service.ExistSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,11 @@ import java.util.Locale;
 public class ReplyKeyboardMaker {
 
     @Autowired
-    SeanseService seanseService;
+    ExistSeanse existSeanse;
 
     private LocalDate ld = LocalDate.now();
-    private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
-            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
+    private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
 
     public ReplyKeyboardMarkup getMainMenuKeyboard() {
@@ -29,10 +30,10 @@ public class ReplyKeyboardMaker {
         KeyboardRow row2 = new KeyboardRow();
 
         for (int i=0; i < 6; i++ ){
-            if (seanseService.seanseExistInMonth(i)){
+            if (existSeanse.ifExistByMonth(i)){
                 if (i <= 2){
-                    row1.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]));
-                } else row2.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]));
+                    row1.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]));
+                } else row2.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]));
             }
         }
 
@@ -54,10 +55,10 @@ public class ReplyKeyboardMaker {
         KeyboardRow row2 = new KeyboardRow();
 
         for (int i=0; i < 6; i++ ){
-            if (seanseService.seanseExistInMonth(i)){
+            if (existSeanse.ifExistByMonth(i)){
                 if (i <= 2){
-                    row1.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]+"_"));
-                } else row2.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]+"_"));
+                    row1.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));
+                } else row2.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));
             }
         }
 

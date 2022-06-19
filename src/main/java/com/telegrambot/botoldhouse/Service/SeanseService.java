@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,6 +29,9 @@ public class SeanseService {
     @Autowired
     private InlineKeybords inlineKeybords;
 
+    @Autowired
+    private ExistSeanse existSeanse;
+
 
     public SendMessage getByMontPageble(int month, String chatId, int page){
         SendMessage sendMessage = new SendMessage();
@@ -46,14 +48,6 @@ public class SeanseService {
             return sendMessage;
     }
 
-    /*
-    Нужен чтобы выводить стартовую клавиатуру - только те месяцы, в которых есть сеансы.
-     */
-    public Boolean seanseExistInMonth(int index){
-        if (seanseRepository.findSeanseByDate(ld.plusMonths(index).getMonthValue()).size() != 0){
-            return true;
-        } else return false;
-    }
 
     /*
     Нужен для получения Продолжительности в формате HH:MM
