@@ -80,8 +80,12 @@ public class ParseToSeanse {
                         String payLink = (e.select("a").attr("data-src"));
                         String webLink = (root + "/" + e.select("h4 > a").attr("href").substring(1));
                         String desc = description.substring(0, description.indexOf('.', 200) + 1);  // краткое описание - несколько предложений
+                        if (desc.length() > 400){
+                            desc = description.substring(0, description.indexOf('?', 200) + 1);
+                        }
 
                         Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, desc);
+                        logger.debug("Добавляем в базу: {} {} {}", seanse.getDate(), seanse.getTime(), seanse.getName());
                         seanses.add(seanse);
 
                     }

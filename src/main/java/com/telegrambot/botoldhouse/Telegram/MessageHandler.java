@@ -3,7 +3,6 @@ package com.telegrambot.botoldhouse.Telegram;
 import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
-import org.hibernate.boot.spi.AbstractDelegatingMetadataBuilderImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,8 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 
 import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.userLogger;
@@ -31,16 +29,16 @@ public class MessageHandler {
     private AdminService adminService;
 
     private LocalDate ld = LocalDate.now();
-    private String[] monts = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+    private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
     private int numCurrentMonth = ld.getMonth().getValue();
-    private String currentMonth = monts[ld.getMonth().getValue()];
-    private String nextMonth = monts[ld.plusMonths(1).getMonth().getValue()];
-    private String nextMonth2 = monts[ld.plusMonths(2).getMonth().getValue()];
-    private String nextMonth3 = monts[ld.plusMonths(3).getMonth().getValue()];
-    private String nextMonth4 = monts[ld.plusMonths(4).getMonth().getValue()];
-    private String nextMonth5 = monts[ld.plusMonths(5).getMonth().getValue()];
+    private String currentMonth = months[ld.getMonth().getValue()];
+    private String nextMonth = months[ld.plusMonths(1).getMonth().getValue()];
+    private String nextMonth2 = months[ld.plusMonths(2).getMonth().getValue()];
+    private String nextMonth3 = months[ld.plusMonths(3).getMonth().getValue()];
+    private String nextMonth4 = months[ld.plusMonths(4).getMonth().getValue()];
+    private String nextMonth5 = months[ld.plusMonths(5).getMonth().getValue()];
 
 
     public SendMessage answerMessage(Message message) throws IOException {
@@ -54,7 +52,7 @@ public class MessageHandler {
                 message.getChat().getLastName(),
                 message.getText());
 
-        adminService.saveUser(String.valueOf(message.getChatId()), message.getChat().getFirstName());
+        adminService.saveUser(String.valueOf(message.getChatId()), message.getChat().getFirstName(), message.getChat().getLastName());
 
         if (inputText == null) {
             throw new IllegalArgumentException();
@@ -64,35 +62,11 @@ public class MessageHandler {
             sendMessage = getStartMessage(chatId);
             return sendMessage;
 
-        } else if (inputText.equals(currentMonth)) {
+        } else if (inputText.equals(currentMonth) | inputText.equals(nextMonth) | inputText.equals(nextMonth2)
+                    | inputText.equals(nextMonth3) | inputText.equals(nextMonth4) | inputText.equals(nextMonth5)) {
 
-            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth, chatId, 0);
+            SendMessage sendMessage = seanseService.getByMontPageble(monthTonum(inputText), chatId, 0);
             return sendMessage;
-
-        } else if (inputText.equals(nextMonth)) {
-
-            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+1, chatId, 0);
-            return sendMessage;
-
-        } else if (inputText.equals(nextMonth2)) {
-
-            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+2, chatId, 0);
-            return sendMessage;
-
-        } else if (inputText.equals(nextMonth3)) {
-
-            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+3, chatId, 0);
-            return sendMessage;
-
-        } else if (inputText.equals(nextMonth4)) {
-
-            SendMessage sendMessage = seanseService.getByMontPageble(numCurrentMonth+4, chatId, 0);
-            return sendMessage;
-
-        } else if (inputText.equals(nextMonth5)) {
-
-            SendMessage messageList = seanseService.getByMontPageble(numCurrentMonth+5, chatId, 1);
-            return messageList;
 
         } else {
             SendMessage messageList = new SendMessage(chatId, "Используйте клавиатуру");
@@ -107,6 +81,10 @@ public class MessageHandler {
         sendMessage.enableMarkdown(true);
         sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
         return sendMessage;
+    }
+
+    private int monthTonum(String monthText){
+        return Arrays.asList(months).indexOf(monthText);
     }
 
 

@@ -36,10 +36,30 @@ public class ReplyKeyboardMaker {
             }
         }
 
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        keyboard.add(row1);
+        keyboard.add(row2);
 
-//        row1.add(new KeyboardButton(monts[ld.getMonth().getValue()]));
-//        row1.add(new KeyboardButton(monts[ld.plusMonths(1).getMonth().getValue()]));
-//        row1.add(new KeyboardButton(monts[ld.plusMonths(2).getMonth().getValue()]));
+        final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        return replyKeyboardMarkup;
+    }
+
+    public ReplyKeyboardMarkup getSeanseByMonthKeybord() {
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardRow row2 = new KeyboardRow();
+
+        for (int i=0; i < 6; i++ ){
+            if (seanseService.seanseExistInMonth(i)){
+                if (i <= 2){
+                    row1.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]+"_"));
+                } else row2.add(new KeyboardButton(monts[ld.plusMonths(i).getMonth().getValue()]+"_"));
+            }
+        }
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row1);

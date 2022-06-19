@@ -18,12 +18,16 @@ public class UserBot {
     @Column(name = "first_name")
     String firstName;
 
+    @Column(name = "last_name")
+    String lastName;
+
     public UserBot() {
     }
 
-    public UserBot(String chatId, String firstName) {
+    public UserBot(String chatId, String firstName, String lastName) {
         this.chatId = chatId;
         this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getChatId() {
@@ -40,5 +44,13 @@ public class UserBot {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

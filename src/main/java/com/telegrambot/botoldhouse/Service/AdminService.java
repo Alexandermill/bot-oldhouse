@@ -31,9 +31,9 @@ public class AdminService {
         return userBotRepository.findAll();
     }
 
-    public void saveUser (String chatId, String firstName){
+    public void saveUser (String chatId, String firstName, String lastName){
         if (userBotRepository.findByChatId(chatId) == null){
-            UserBot userBot = new UserBot(chatId, firstName);
+            UserBot userBot = new UserBot(chatId, firstName, lastName);
             userBotRepository.save(userBot);
         }
     }
