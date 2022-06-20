@@ -49,12 +49,12 @@ public class ReplyKeyboardMaker {
         return replyKeyboardMarkup;
     }
 
-    public ReplyKeyboardMarkup getSeanseByMonthKeybord() {
+    public ReplyKeyboardMarkup getSeanseByNameKeybord() {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
 
         for (int i=0; i < 6; i++ ){
-            if (cacheSeanse.ifExistByMonth(i)){
+            if (cacheSeanse.ifExistByMonth(ld.plusMonths(i).getMonth().getValue())){
                 if (i <= 2){
                     row1.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));
                 } else row2.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));

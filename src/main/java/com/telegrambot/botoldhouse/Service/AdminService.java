@@ -41,6 +41,10 @@ public class AdminService {
         }
     }
 
+    public void deleteAllSeanses(){
+        seanseRepository.deleteAll();
+    }
+
 
     @Scheduled(cron = "${interval-in-cron}")
     public void updateDB() throws IOException {

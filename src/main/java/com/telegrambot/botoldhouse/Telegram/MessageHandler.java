@@ -3,17 +3,17 @@ package com.telegrambot.botoldhouse.Telegram;
 import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
+import com.telegrambot.botoldhouse.Telegram.Keybords.InlineKeybords;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import  com.telegrambot.botoldhouse.Constants.MSG_Enum;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Locale;
 
 import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.userLogger;
 
@@ -22,6 +22,9 @@ public class MessageHandler {
 
     @Autowired
     private ReplyKeyboardMaker replyKeyboardMaker;
+
+    @Autowired
+    private InlineKeybords inlineKeybords;
 
     @Autowired
     private SeanseService seanseService;
@@ -56,7 +59,6 @@ public class MessageHandler {
             SendMessage sendMessage = getStartMessage(chatId);
             return sendMessage;
 
-
         } else if (cacheSeanse.ifExistByMonth(inputText)) {
 
             SendMessage sendMessage = seanseService.getByMontPageble(monthTonum(inputText), chatId, 0);
@@ -75,10 +77,17 @@ public class MessageHandler {
     }
 
 
+//    private SendMessage getStartMessage(String chatId) {
+//        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месяц!");
+//        sendMessage.enableMarkdown(true);
+//        sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
+//        return sendMessage;
+//    }
+
     private SendMessage getStartMessage(String chatId) {
-        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месяц!");
-        sendMessage.enableMarkdown(true);
-        sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
+        SendMessage sendMessage = new SendMessage(chatId, MSG_Enum.START_MSG.getMsg());
+        sendMessage.enableHtml(true);
+        sendMessage.setReplyMarkup(inlineKeybords.getStartInlineButtons());
         return sendMessage;
     }
 

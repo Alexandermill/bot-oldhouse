@@ -89,11 +89,8 @@ public class ParseToSeanse {
                             desc = description.substring(0, description.indexOf('?', 200) + 1);
                         }
 
-                        System.out.println("до кодировки :" +desc);
-
                         byte[] byteDesc = desc.getBytes(StandardCharsets.UTF_8);
                         String descUTF8 = new String(byteDesc, Charsets.UTF_8);
-                        System.out.println("После кодировки"+descUTF8);
 
                         Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, descUTF8, adress);
                         logger.debug("Добавляем в базу: {} {} {}", seanse.getDate(), seanse.getTime(), seanse.getName());

@@ -43,6 +43,14 @@ public class controllerSeanse {
         return adminService.getUsers();
     }
 
+    @GetMapping ("/delete")
+    public String deleteall() throws IOException {
+        adminService.deleteAllSeanses();
+        if (adminService.getAll() == null) {
+            return "deleted";
+        } else return "not deleted";
+    }
+
     @GetMapping ("/seanse")
     public Iterable<Seanse> getall(@RequestParam int mont, @RequestParam int page) throws IOException {
         return seanseRepository.findSeansesByMontPageble(mont, PageRequest.of(page, 4));

@@ -86,5 +86,20 @@ public class InlineKeybords {
 
     }
 
+    public InlineKeyboardMarkup getStartInlineButtons(){
+        InlineKeyboardButton byNameButton = new InlineKeyboardButton("По названию");
+        InlineKeyboardButton listAllButton = new InlineKeyboardButton("Листать все");
+        byNameButton.setCallbackData(CalbackDataEnum.BY_NAME.name());
+        listAllButton.setCallbackData(CalbackDataEnum.LIST_ALL.name());
+        List<InlineKeyboardButton> buttonList = new ArrayList<>();
+        buttonList.add(byNameButton);
+        buttonList.add(listAllButton);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(buttonList);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rowList);
+
+        return inlineKeyboardMarkup;
+    }
+
 
 }
