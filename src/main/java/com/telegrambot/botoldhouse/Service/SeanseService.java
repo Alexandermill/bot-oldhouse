@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 
 import java.time.LocalDate;
@@ -86,7 +85,7 @@ public class SeanseService {
         return editMessageText;
     }
 
-    public SendMessage getByMontAndNamePageble(int month, String chatId, String name, int page){
+    public SendMessage getMsgByMontAndNamePageble(int month, String chatId, String name, int page){
         SendMessage sendMessage = new SendMessage();
         int messageInPage = 1;
         Seanse seanse = seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page, messageInPage));

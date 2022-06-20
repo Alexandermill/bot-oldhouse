@@ -86,7 +86,7 @@ public class OldHouseBot extends SpringWebhookBot {
                     int page = Integer.parseInt(arrData[1]);
                     int month = Integer.parseInt(arrData[2]);
                     String name = arrData[3];
-                    SendMessage sendMessage = seanseService.getByMontAndNamePageble(month, chatId, name, page);
+                    SendMessage sendMessage = seanseService.getMsgByMontAndNamePageble(month, chatId, name, page);
                     execute(sendMessage);
                 } else if (arrData[0].equals(CalbackDataEnum.ONE_SEANSE.name())) {
                     int page = Integer.parseInt(arrData[1]);

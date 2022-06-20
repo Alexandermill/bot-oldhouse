@@ -76,9 +76,6 @@ public class InlineKeybords {
         for (int i = 0; i < seansesName.size(); i++) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i));
-
-            System.out.println("В колбэк пишем: "+CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
-
             buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
             buttonList.add(buttonSeanse);
             rowList.add(buttonList);

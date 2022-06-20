@@ -61,6 +61,15 @@ public class CacheSeanse {
         return exist;
     }
 
+    public String getNameById(Long id){
+        for(SeanseDateTimeName s : this.seansDTN){
+            if(s.getId() == id){
+                return s.getName();
+            }
+        }
+        return null;
+    }
+
     private int monthToNum(String monthText){
         return Arrays.asList(months).indexOf(monthText);
     }
