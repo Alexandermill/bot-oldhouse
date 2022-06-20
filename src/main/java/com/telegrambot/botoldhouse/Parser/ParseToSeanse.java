@@ -1,5 +1,6 @@
 package com.telegrambot.botoldhouse.Parser;
 
+import com.google.common.base.Charsets;
 import com.telegrambot.botoldhouse.Entity.Seanse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -76,15 +79,23 @@ public class ParseToSeanse {
                             time = LocalTime.parse(e.select("h3").text(), DateTimeFormatter.ofPattern("HH:mm"));
                         }
 
-                        String name = (e.select("h4 > a, p").text());
+                        String name = (e.select("h4 > a").text());
+                        String adress = (e.select("p").text());
                         String payLink = (e.select("a").attr("data-src"));
                         String webLink = (root + "/" + e.select("h4 > a").attr("href").substring(1));
                         String desc = description.substring(0, description.indexOf('.', 200) + 1);  // краткое описание - несколько предложений
-                        if (desc.length() > 400){
+
+                        if (desc.length() > 400 & desc.contains("?")){
                             desc = description.substring(0, description.indexOf('?', 200) + 1);
                         }
 
-                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, desc);
+                        System.out.println("до кодировки :" +desc);
+
+                        byte[] byteDesc = desc.getBytes(StandardCharsets.UTF_8);
+                        String descUTF8 = new String(byteDesc, Charsets.UTF_8);
+                        System.out.println("После кодировки"+descUTF8);
+
+                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, descUTF8, adress);
                         logger.debug("Добавляем в базу: {} {} {}", seanse.getDate(), seanse.getTime(), seanse.getName());
                         seanses.add(seanse);
 

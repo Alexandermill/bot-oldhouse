@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,6 +24,8 @@ public class SeanseService {
     private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMMM", new Locale("ru"));
     private DateTimeFormatter dtfWeekDay = DateTimeFormatter.ofPattern("EEEE", new Locale("ru"));
     private DateTimeFormatter Hmm = DateTimeFormatter.ofPattern("H:mm", new Locale("ru"));
+    private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
 
     @Autowired
     private SeanseRepository seanseRepository;
@@ -30,7 +34,7 @@ public class SeanseService {
     private InlineKeybords inlineKeybords;
 
     @Autowired
-    private ExistSeanse existSeanse;
+    private CacheSeanse cacheSeanse;
 
 
     public SendMessage getByMontPageble(int month, String chatId, int page){
@@ -42,11 +46,69 @@ public class SeanseService {
 
             sendMessage = seanseToMessage(seanses.get(i), page);
             sendMessage.setChatId(chatId);
-            sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanses.get(i), page, month, ifNotfinalPage(month, page)));
+            sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanses.get(i), page, month,
+                                        ifNotfinalPage(month, page), CalbackDataEnum.ALL_SEANSES.name())
+                                        );
 
         }
             return sendMessage;
     }
+
+    public EditMessageText getEditMessage(int month, int page, String chatId, Integer messageId){
+        Seanse seanse = seanseRepository.findSeanseByMontPageble(month, PageRequest.of(page, 1));
+        EditMessageText editMessageText = new EditMessageText();
+        SendMessage sendMessage = seanseToMessage(seanse, page);
+        editMessageText.enableHtml(true);
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(sendMessage.getText());
+        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+                                        ifNotfinalPage(month, page), CalbackDataEnum.ALL_SEANSES.name())
+                                        );
+        editMessageText.disableWebPagePreview();
+
+        return editMessageText;
+    }
+
+    public EditMessageText getEditMessage(int month, int page, String chatId, String name, Integer messageId){
+        Seanse seanse = seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page, 1));
+        EditMessageText editMessageText = new EditMessageText();
+        SendMessage sendMessage = seanseToMessage(seanse, page);
+        editMessageText.enableHtml(true);
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(sendMessage.getText());
+        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+                                        ifNotfinalPage(month, page, name), CalbackDataEnum.ONE_SEANSE.name(), name)
+                                        );
+        editMessageText.disableWebPagePreview();
+
+        return editMessageText;
+    }
+
+    public SendMessage getByMontAndNamePageble(int month, String chatId, String name, int page){
+        SendMessage sendMessage = new SendMessage();
+        int messageInPage = 1;
+        Seanse seanse = seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page, messageInPage));
+        sendMessage = seanseToMessage(seanse, page);
+        sendMessage.setChatId(chatId);
+        sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+                                    ifNotfinalPage(month, page, name), CalbackDataEnum.ONE_SEANSE.name(), name)
+                                    );
+
+
+        return sendMessage;
+    }
+
+    public SendMessage getNameSensesInMonth (int month, String chatId){
+        SendMessage sendMessage = new SendMessage(chatId, "Спектакли на "+ months[month]+" :\n нажмите для перехода к показам и описанию");
+        List<String> seansesName = seanseRepository.findSeansesNameByMonth(month);
+        seansesName.forEach(s -> System.out.println(s+"\n"));
+        sendMessage.setReplyMarkup(inlineKeybords.getInlineMonnthKeybord(seansesName, month));
+        return sendMessage;
+    }
+
+
 
 
     /*
@@ -83,19 +145,16 @@ public class SeanseService {
         return next;
     }
 
-    public EditMessageText getEditMessage(int month, int page, String chatId, Integer messageId){
-        Seanse seanse = seanseRepository.findSeanseByMontPageble(month, PageRequest.of(page, 1));
-        EditMessageText editMessageText = new EditMessageText();
-        SendMessage sendMessage = getByMontPageble(month,  chatId, page);
-        editMessageText.enableHtml(true);
-        editMessageText.setChatId(chatId);
-        editMessageText.setMessageId(messageId);
-        editMessageText.setText(sendMessage.getText());
-        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month, ifNotfinalPage(month, page)));
-        editMessageText.disableWebPagePreview();
+    private boolean ifNotfinalPage(int month, int page, String name){
 
-        return editMessageText;
+        boolean next = false;
+        if (seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page+1, 1)) != null){
+            next = true;
+        }
+        return next;
     }
+
+
 
     private String getEndTime( String duration, LocalTime startTime){
         String emoji = EmojiParser.parseToUnicode(":frowning:");
@@ -135,7 +194,8 @@ public class SeanseService {
                 "#"+page+"     "+calendar + " " + "<b>"+ seanse.getDate().format(dtf)+"</b>"
                 + "  " + seanse.getDate().format(dtfWeekDay) + "\n\n"
                 +clock +" <i> начало </i> "+ seanse.getTime().toString() +"  <i>окончание</i> "+getEndTime(dur,seanse.getTime())
-                + "\n\n" + "Спектакль: " + "<b>"+seanse.getName() +"</b>"  + "\n\n"
+                + "\n\n" + "Спектакль: " + "<b>"+seanse.getName() +"</b>"  + "\n"
+                +seanse.getAdress()+ "\n"
                 + "Продолжительность: " + dur+"\n\n" + payemoji
                 +" <a href=\"" + palLink + "\">"+ pay + "</a>" + "       " + "<a href=\"" + webLink + "\">на сайт</a>"+"\n\n"
                 + "Описание: \n"

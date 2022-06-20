@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class ExistSeanse {
+public class CacheSeanse {
 
     @Autowired
     private SeanseRepository seanseRepository;
@@ -34,7 +34,7 @@ public class ExistSeanse {
             int month = ld.plusMonths(i).getMonth().getValue();
             List<Seanse> seanses = seanseRepository.findSeanseByMonth(month);
             seanses.forEach(s -> {
-                SeanseDateTimeName seanseDateTimeName = new SeanseDateTimeName(s.getDate(), s.getTime(), s.getName());
+                SeanseDateTimeName seanseDateTimeName = new SeanseDateTimeName(s.getId(), s.getDate(), s.getTime(), s.getName());
                 this.seansDTN.add(seanseDateTimeName);
             });
         }
@@ -52,7 +52,7 @@ public class ExistSeanse {
 
     public boolean ifExistByMonth(String month){
         exist = false;
-        int monthNum = monthTonum(month);
+        int monthNum = monthToNum(month);
         seansDTN.forEach(sDTN -> {
             if (sDTN.getDate().getMonth().getValue() == monthNum){
                 exist = true;
@@ -61,7 +61,7 @@ public class ExistSeanse {
         return exist;
     }
 
-    private int monthTonum(String monthText){
+    private int monthToNum(String monthText){
         return Arrays.asList(months).indexOf(monthText);
     }
 }

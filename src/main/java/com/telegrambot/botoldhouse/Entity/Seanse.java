@@ -20,12 +20,13 @@ public class Seanse {
     String durattion;
     String payLink;
     String webLink;
+    String adress;
 
 
     public Seanse() {
     }
 
-    public Seanse(LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink, String description) {
+    public Seanse(LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink, String description, String adress) {
         this.date = date;
         this.time = time;
         this.name = name;
@@ -33,6 +34,7 @@ public class Seanse {
         this.durattion = durattion;
         this.payLink = payLink;
         this.webLink = webLink;
+        this.adress = adress;
     }
 
     public LocalDate getDate() {
@@ -89,5 +91,17 @@ public class Seanse {
 
     public void setWebLink(String webLink) {
         this.webLink = webLink;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

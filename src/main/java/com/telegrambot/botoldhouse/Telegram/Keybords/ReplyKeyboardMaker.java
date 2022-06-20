@@ -1,7 +1,6 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
-import com.telegrambot.botoldhouse.Service.ExistSeanse;
-import com.telegrambot.botoldhouse.Service.SeanseService;
+import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -18,7 +17,7 @@ import java.util.Locale;
 public class ReplyKeyboardMaker {
 
     @Autowired
-    ExistSeanse existSeanse;
+    CacheSeanse cacheSeanse;
 
     private LocalDate ld = LocalDate.now();
     private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
@@ -30,7 +29,7 @@ public class ReplyKeyboardMaker {
         KeyboardRow row2 = new KeyboardRow();
 
         for (int i=0; i < 6; i++ ){
-            if (existSeanse.ifExistByMonth(i)){
+            if (cacheSeanse.ifExistByMonth(ld.plusMonths(i).getMonth().getValue())){
                 if (i <= 2){
                     row1.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]));
                 } else row2.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]));
@@ -55,7 +54,7 @@ public class ReplyKeyboardMaker {
         KeyboardRow row2 = new KeyboardRow();
 
         for (int i=0; i < 6; i++ ){
-            if (existSeanse.ifExistByMonth(i)){
+            if (cacheSeanse.ifExistByMonth(i)){
                 if (i <= 2){
                     row1.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));
                 } else row2.add(new KeyboardButton(months[ld.plusMonths(i).getMonth().getValue()]+"_"));

@@ -1,7 +1,7 @@
 package com.telegrambot.botoldhouse.Telegram;
 
 import com.telegrambot.botoldhouse.Service.AdminService;
-import com.telegrambot.botoldhouse.Service.ExistSeanse;
+import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class MessageHandler {
     private SeanseService seanseService;
 
     @Autowired
-    private ExistSeanse existSeanse;
+    private CacheSeanse cacheSeanse;
 
     @Autowired
     private AdminService adminService;
@@ -35,15 +35,6 @@ public class MessageHandler {
     private LocalDate ld = LocalDate.now();
     private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd ММММ yyyy", new Locale("ru"));
-    private int numCurrentMonth = ld.getMonth().getValue();
-    private String currentMonth = months[ld.getMonth().getValue()];
-    private String nextMonth = months[ld.plusMonths(1).getMonth().getValue()];
-    private String nextMonth2 = months[ld.plusMonths(2).getMonth().getValue()];
-    private String nextMonth3 = months[ld.plusMonths(3).getMonth().getValue()];
-    private String nextMonth4 = months[ld.plusMonths(4).getMonth().getValue()];
-    private String nextMonth5 = months[ld.plusMonths(5).getMonth().getValue()];
-
 
     public SendMessage answerMessage(Message message) throws IOException {
 
@@ -62,16 +53,18 @@ public class MessageHandler {
             throw new IllegalArgumentException();
         } else if (inputText.equals("/start")) {
 
-            SendMessage sendMessage = new SendMessage();
-            sendMessage = getStartMessage(chatId);
+            SendMessage sendMessage = getStartMessage(chatId);
             return sendMessage;
 
-//             | inputText.equals(nextMonth) | inputText.equals(nextMonth2)
-//                    | inputText.equals(nextMonth3) | inputText.equals(nextMonth4) | inputText.equals(nextMonth5)
 
-        } else if (existSeanse.ifExistByMonth(inputText)) {
+        } else if (cacheSeanse.ifExistByMonth(inputText)) {
 
             SendMessage sendMessage = seanseService.getByMontPageble(monthTonum(inputText), chatId, 0);
+            return sendMessage;
+
+        } else  if (cacheSeanse.ifExistByMonth(inputText.substring(0, inputText.length()-1)) & inputText.contains("_")) {
+
+            SendMessage sendMessage = seanseService.getNameSensesInMonth(monthTonum(inputText.substring(0, inputText.length()-1)), chatId);
             return sendMessage;
 
         } else {

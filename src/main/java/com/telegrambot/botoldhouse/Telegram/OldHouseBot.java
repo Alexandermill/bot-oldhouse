@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 
 
 public class OldHouseBot extends SpringWebhookBot {
@@ -68,31 +69,39 @@ public class OldHouseBot extends SpringWebhookBot {
         try {
             if (update.hasCallbackQuery() && !update.getCallbackQuery().getData().equals("null")) {
 
-                userLogger.debug("User {}, {}, нажал кнопку {}", update.getCallbackQuery().getMessage().getChatId(),
-                        update.getCallbackQuery().getMessage().getChat().getFirstName(),
-                        update.getCallbackQuery().getMessage().getReplyMarkup().getKeyboard().get(0).get(0).getText());
-
+//                userLogger.debug("User {}, {}, нажал кнопку {}", update.getCallbackQuery().getMessage().getChatId(),
+//                        update.getCallbackQuery().getMessage().getChat().getFirstName(),
+//                        update.getCallbackQuery().getMessage().getReplyMarkup().getKeyboard().get(0).get(0).getText());
 
 
                 String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
-                String[] arrData = update.getCallbackQuery().getData().split(",");
-                int page = Integer.parseInt(arrData[0]);
-                int month = Integer.parseInt(arrData[1]);
                 Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
-
-                SendMessage sendMessage = seanseService.getByMontPageble( month,  chatId, page);
-
-
-
+                String[] arrData = update.getCallbackQuery().getData().split("#>");
+                if (arrData[0].equals(CalbackDataEnum.ALL_SEANSES.name())) {
+                    int page = Integer.parseInt(arrData[1]);
+                    int month = Integer.parseInt(arrData[2]);
 
                     execute(seanseService.getEditMessage(month, page, chatId, messageId));
+                } else if (arrData[0].equals(CalbackDataEnum.GET_MSG.name())) {
+                    int page = Integer.parseInt(arrData[1]);
+                    int month = Integer.parseInt(arrData[2]);
+                    String name = arrData[3];
+                    SendMessage sendMessage = seanseService.getByMontAndNamePageble(month, chatId, name, page);
+                    execute(sendMessage);
+                } else if (arrData[0].equals(CalbackDataEnum.ONE_SEANSE.name())) {
+                    int page = Integer.parseInt(arrData[1]);
+                    int month = Integer.parseInt(arrData[2]);
+                    String name = arrData[3];
+                    execute(seanseService.getEditMessage(month, page, chatId, name, messageId));
 
-
+                }
             } else if (update.getMessage() != null && update.getMessage().getText() != null) {
 
-                execute(messageHandler.answerMessage(update.getMessage()));
+                    execute(messageHandler.answerMessage(update.getMessage()));
+                }
 
-            }
+
+
 
 
         } catch (IllegalArgumentException e) {
@@ -100,7 +109,7 @@ public class OldHouseBot extends SpringWebhookBot {
             return new SendMessage(update.getMessage().getChatId().toString(),
                     "Попробуйте воспользоваться клавиатурой");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.debug(e.toString());
             return new SendMessage(update.getMessage().getChatId().toString(),
                     "Что то пошло не так");
         }

@@ -1,10 +1,10 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
-import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +12,23 @@ import java.util.List;
 @Component
 public class InlineKeybords {
 
-    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next){
-
-
+    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next, String prefix){
 
         InlineKeyboardButton buttonNext = new InlineKeyboardButton();
         InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
         InlineKeyboardButton buttonNull = new InlineKeyboardButton("   ");
         buttonNull.setCallbackData("null");
 
-
-
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
         if (page != 0) {
             buttonPrevios.setText(" < " + page);
-            buttonPrevios.setCallbackData(String.valueOf(page -1 )+","+String.valueOf(month));
+            buttonPrevios.setCallbackData(prefix +"#>"+ String.valueOf(page -1 )+"#>"+String.valueOf(month));
             buttonList.add(buttonPrevios);
         } else buttonList.add(buttonNull);
 
         if (next) {
             buttonNext.setText((page+2) + " > ");
-            buttonNext.setCallbackData(String.valueOf(page +1 )+","+String.valueOf(month));
+            buttonNext.setCallbackData(prefix +"#>"+ String.valueOf(page +1 )+"#>"+String.valueOf(month));
             buttonList.add(buttonNext);
         } else buttonList.add(buttonNull);
 
@@ -44,16 +40,54 @@ public class InlineKeybords {
         return inlineKeybord;
     }
 
-    public InlineKeyboardMarkup getNextButton (int mont, int page){
-        InlineKeyboardButton buttonNext = new InlineKeyboardButton("Далее >");
-        buttonNext.setCallbackData(String.valueOf(page)+","+String.valueOf(mont));
-        List<InlineKeyboardButton> buttonList2 = new ArrayList<>();
-        buttonList2.add(buttonNext);
-        List<List<InlineKeyboardButton>> rowList2 = new ArrayList<>();
-        rowList2.add(buttonList2);
-        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
-        inlineKeyboard.setKeyboard(rowList2);
-        return inlineKeyboard;
+    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next, String prefix, String name){
+
+        InlineKeyboardButton buttonNext = new InlineKeyboardButton();
+        InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
+        InlineKeyboardButton buttonNull = new InlineKeyboardButton("   ");
+        buttonNull.setCallbackData("null");
+
+        List<InlineKeyboardButton> buttonList = new ArrayList<>();
+        if (page != 0) {
+            buttonPrevios.setText(" < " + page);
+            buttonPrevios.setCallbackData(prefix +"#>"+ String.valueOf(page -1 )+"#>"+String.valueOf(month)+"#>"+name);
+            buttonList.add(buttonPrevios);
+        } else buttonList.add(buttonNull);
+
+        if (next) {
+            buttonNext.setText((page+2) + " > ");
+            buttonNext.setCallbackData(prefix +"#>"+ String.valueOf(page +1 )+"#>"+String.valueOf(month)+"#>"+name);
+            buttonList.add(buttonNext);
+        } else buttonList.add(buttonNull);
+
+        InlineKeyboardMarkup inlineKeybord = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(buttonList);
+        inlineKeybord.setKeyboard(rowList);
+
+        return inlineKeybord;
     }
+
+    public InlineKeyboardMarkup getInlineMonnthKeybord(List<String> seansesName, int month){
+        InlineKeyboardMarkup monthKeybord = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        int page = 0;
+
+        for (int i = 0; i < seansesName.size(); i++) {
+            List<InlineKeyboardButton> buttonList = new ArrayList<>();
+            InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i));
+
+            System.out.println("В колбэк пишем: "+CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
+
+            buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
+            buttonList.add(buttonSeanse);
+            rowList.add(buttonList);
+        }
+
+        monthKeybord.setKeyboard(rowList);
+        return monthKeybord;
+
+    }
+
 
 }

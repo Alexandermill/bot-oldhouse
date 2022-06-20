@@ -7,6 +7,7 @@ import java.time.LocalTime;
 @Component
 public class SeanseDateTimeName {
 
+    Long id;
     LocalDate date;
     LocalTime time;
     String name;
@@ -14,7 +15,7 @@ public class SeanseDateTimeName {
     public SeanseDateTimeName() {
     }
 
-    public SeanseDateTimeName(LocalDate date, LocalTime time, String name) {
+    public SeanseDateTimeName(Long id, LocalDate date, LocalTime time, String name) {
         this.date = date;
         this.time = time;
         this.name = name;
@@ -42,5 +43,13 @@ public class SeanseDateTimeName {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
