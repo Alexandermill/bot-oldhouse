@@ -37,16 +37,17 @@ public class ParseToSeanse {
     DateTimeFormatter dtfMonth = DateTimeFormatter.ofPattern("MMMM", new Locale("RU"));
     String root = "https://old-house.ru";
     String jsonStr;
-    List<Seanse> seanses = new ArrayList<>();
+
 
 
     URL url = null;
 
     public List<Seanse> getFullAfisha() throws IOException {
+        List<Seanse> seanses = new ArrayList<>();
 
-            String month = "";
+        String month = "";
 
-            for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
                 LocalDate ld = localDate.plusMonths(i);
                 String jsonStr = getJson(ld);
                 month = ld.format(dtfMonth);
@@ -98,7 +99,7 @@ public class ParseToSeanse {
 
                     }
                 }
-            }
+        }
 
             return seanses;
 

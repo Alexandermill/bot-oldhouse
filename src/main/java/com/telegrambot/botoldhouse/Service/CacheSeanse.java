@@ -70,6 +70,16 @@ public class CacheSeanse {
         return null;
     }
 
+    public int getCountSeansesByNameAndMonth(String name, int month){
+        int count=0;
+        for(SeanseDateTimeName s : this.seansDTN){
+            if(s.getName().equals(name) & s.getDate().getMonth().getValue() == month){
+                count++;
+            }
+        }
+        return count;
+    }
+
     private int monthToNum(String monthText){
         return Arrays.asList(months).indexOf(monthText);
     }

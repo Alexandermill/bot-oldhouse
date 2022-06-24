@@ -45,7 +45,7 @@ public class SeanseService {
 
             sendMessage = seanseToMessage(seanses.get(i), page);
             sendMessage.setChatId(chatId);
-            sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanses.get(i), page, month,
+            sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(page, month,
                                         ifNotfinalPage(month, page), CalbackDataEnum.ALL_SEANSES.name())
                                         );
 
@@ -61,7 +61,7 @@ public class SeanseService {
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
         editMessageText.setText(sendMessage.getText());
-        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(page, month,
                                         ifNotfinalPage(month, page), CalbackDataEnum.ALL_SEANSES.name())
                                         );
         editMessageText.disableWebPagePreview();
@@ -77,7 +77,7 @@ public class SeanseService {
         editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
         editMessageText.setText(sendMessage.getText());
-        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+        editMessageText.setReplyMarkup(inlineKeybords.getInlineButtons(page, month,
                                         ifNotfinalPage(month, page, name), CalbackDataEnum.ONE_SEANSE.name(), name)
                                         );
         editMessageText.disableWebPagePreview();
@@ -91,7 +91,7 @@ public class SeanseService {
         Seanse seanse = seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page, messageInPage));
         sendMessage = seanseToMessage(seanse, page);
         sendMessage.setChatId(chatId);
-        sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(seanse, page, month,
+        sendMessage.setReplyMarkup(inlineKeybords.getInlineButtons(page, month,
                                     ifNotfinalPage(month, page, name), CalbackDataEnum.ONE_SEANSE.name(), name)
                                     );
 
@@ -100,9 +100,8 @@ public class SeanseService {
     }
 
     public SendMessage getNameSensesInMonth (int month, String chatId){
-        SendMessage sendMessage = new SendMessage(chatId, "Спектакли на "+ months[month]+" :\n нажмите для перехода к показам и описанию");
+        SendMessage sendMessage = new SendMessage(chatId, "Спектакли на "+ months[month]+" :\nнажмите для перехода к показам и описанию");
         List<String> seansesName = seanseRepository.findSeansesNameByMonth(month);
-        seansesName.forEach(s -> System.out.println(s+"\n"));
         sendMessage.setReplyMarkup(inlineKeybords.getInlineMonnthKeybord(seansesName, month));
         return sendMessage;
     }

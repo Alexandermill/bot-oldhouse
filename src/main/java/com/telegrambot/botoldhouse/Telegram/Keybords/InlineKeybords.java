@@ -1,6 +1,8 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
 import com.telegrambot.botoldhouse.Entity.Seanse;
+import com.telegrambot.botoldhouse.Service.CacheSeanse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -12,7 +14,10 @@ import java.util.List;
 @Component
 public class InlineKeybords {
 
-    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next, String prefix){
+    @Autowired
+    CacheSeanse cacheSeanse;
+
+    public InlineKeyboardMarkup getInlineButtons(int page, int month, boolean next, String prefix){
 
         InlineKeyboardButton buttonNext = new InlineKeyboardButton();
         InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
@@ -40,7 +45,7 @@ public class InlineKeybords {
         return inlineKeybord;
     }
 
-    public InlineKeyboardMarkup getInlineButtons(Seanse seanse, int page, int month, boolean next, String prefix, String name){
+    public InlineKeyboardMarkup getInlineButtons(int page, int month, boolean next, String prefix, String name){
 
         InlineKeyboardButton buttonNext = new InlineKeyboardButton();
         InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
@@ -75,7 +80,8 @@ public class InlineKeybords {
 
         for (int i = 0; i < seansesName.size(); i++) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
-            InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i));
+            InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i)+"  "
+                                                +cacheSeanse.getCountSeansesByNameAndMonth(seansesName.get(i), month)); // TODO: 22.06.2022
             buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
             buttonList.add(buttonSeanse);
             rowList.add(buttonList);
