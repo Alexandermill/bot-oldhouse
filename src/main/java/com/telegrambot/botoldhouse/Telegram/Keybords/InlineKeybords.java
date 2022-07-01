@@ -1,12 +1,11 @@
 package com.telegrambot.botoldhouse.Telegram.Keybords;
 
-import com.telegrambot.botoldhouse.Entity.Seanse;
+import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +80,7 @@ public class InlineKeybords {
         for (int i = 0; i < seansesName.size(); i++) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i)+"  "
-                                                +cacheSeanse.getCountSeansesByNameAndMonth(seansesName.get(i), month)); // TODO: 22.06.2022
+                                                +cacheSeanse.getCountSeansesByNameAndMonth(seansesName.get(i), month));
             buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
             buttonList.add(buttonSeanse);
             rowList.add(buttonList);

@@ -4,8 +4,8 @@ import com.telegrambot.botoldhouse.Telegram.CallbackQueryHandler;
 import com.telegrambot.botoldhouse.Telegram.MessageHandler;
 import com.telegrambot.botoldhouse.Telegram.OldHouseBot;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 
 @Configuration

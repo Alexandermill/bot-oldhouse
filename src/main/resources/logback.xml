@@ -52,7 +52,7 @@
     </appender>
 
     <logger name="com.telegrambot.botoldhouse.Telegram.OldHouseBot" level="debug" additivity="false">
-        <appender-ref ref="FILE-AUDIT" />
+        <appender-ref ref="STDOUT" />
     </logger>
 
     <logger name="telegram_bot" level="debug" additivity="false">
@@ -60,7 +60,7 @@
     </logger>
 
     <logger name="org.hibernate.SQL" level="debug" additivity="false">
-        <appender-ref ref="FILE-AUDIT" />
+        <appender-ref ref="STDOUT" />
     </logger>
     <logger name="com.zaxxer.hikari.pool.PoolBase" level="ERROR"/>
     <logger name="com.zaxxer.hikari.pool.HikariPool" level="ERROR"/>
@@ -68,7 +68,7 @@
 
 
     <root level="debug">
-        <appender-ref ref="FILE-AUDIT" />
+        <appender-ref ref="STDOUT" />
     </root>
 
 </configuration>

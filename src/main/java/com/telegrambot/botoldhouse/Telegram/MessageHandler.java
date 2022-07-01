@@ -1,5 +1,6 @@
 package com.telegrambot.botoldhouse.Telegram;
 
+import com.telegrambot.botoldhouse.Constants.MSG_Enum;
 import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import  com.telegrambot.botoldhouse.Constants.MSG_Enum;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,8 +20,8 @@ import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.userLogger;
 @Component
 public class MessageHandler {
 
-    @Autowired
-    private ReplyKeyboardMaker replyKeyboardMaker;
+//    @Autowired
+//    private ReplyKeyboardMaker replyKeyboardMaker;
 
     @Autowired
     private InlineKeybords inlineKeybords;
@@ -50,7 +50,8 @@ public class MessageHandler {
                 message.getChat().getLastName(),
                 message.getText());
 
-        adminService.saveUser(String.valueOf(message.getChatId()), message.getChat().getFirstName(), message.getChat().getLastName());
+        adminService.saveUser(String.valueOf(message.getChatId()), message.getChat().getFirstName(),
+                                message.getChat().getLastName());
 
         if (inputText == null) {
             throw new IllegalArgumentException();
@@ -76,13 +77,6 @@ public class MessageHandler {
 
     }
 
-
-//    private SendMessage getStartMessage(String chatId) {
-//        SendMessage sendMessage = new SendMessage(chatId, "Воспользуйтесь клавиатурой чтобы получить Афишу на месяц!");
-//        sendMessage.enableMarkdown(true);
-//        sendMessage.setReplyMarkup(replyKeyboardMaker.getMainMenuKeyboard());
-//        return sendMessage;
-//    }
 
     private SendMessage getStartMessage(String chatId) {
         SendMessage sendMessage = new SendMessage(chatId, MSG_Enum.START_MSG.getMsg());
