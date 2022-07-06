@@ -182,7 +182,7 @@ public class SeanseService {
             palLink = seanse.getPayLink();
         }
 
-        if (seanse.getPayLink().isBlank()) {
+        if (seanse.getWebLink().isBlank()) {
             webLink = "https://old-house.ru";
         } else {
             webLink = seanse.getWebLink();

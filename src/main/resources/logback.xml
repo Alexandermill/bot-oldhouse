@@ -45,14 +45,14 @@
 
     </appender>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <logger name="com.telegrambot.botoldhouse.Telegram.OldHouseBot" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE-AUDIT" />
     </logger>
 
     <logger name="telegram_bot" level="debug" additivity="false">
@@ -60,7 +60,7 @@
     </logger>
 
     <logger name="org.hibernate.SQL" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE-AUDIT" />
     </logger>
     <logger name="com.zaxxer.hikari.pool.PoolBase" level="ERROR"/>
     <logger name="com.zaxxer.hikari.pool.HikariPool" level="ERROR"/>
@@ -68,7 +68,7 @@
 
 
     <root level="debug">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE-AUDIT" />
     </root>
 
 </configuration>
