@@ -1,6 +1,7 @@
 package com.telegrambot.botoldhouse.Telegram;
 
 import com.telegrambot.botoldhouse.Constants.CalbackDataEnum;
+import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class CallbackQueryHandler {
     SeanseService seanseService;
     @Autowired
     ReplyKeyboardMaker replyKeyboardMaker;
+    @Autowired
+    CacheSeanse cacheSeanse;
 
     public BotApiMethod<?> CallbackQueryAnswer (CallbackQuery callbackQuery) throws IOException {
         String chatId = callbackQuery.getMessage().getChatId().toString();

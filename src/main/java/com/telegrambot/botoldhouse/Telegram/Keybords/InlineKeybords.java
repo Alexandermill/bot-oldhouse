@@ -81,7 +81,9 @@ public class InlineKeybords {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i)+"  "
                                                 +cacheSeanse.getCountSeansesByNameAndMonth(seansesName.get(i), month));
-            buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
+            // buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
+            buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + "ПУТЕШЕСТВИЕ / ИСХОДНАЯ ТОЧ");
+            System.out.println("\n\n============================= CalbackDataEnum.GET_MSG.name() "+ CalbackDataEnum.GET_MSG.name());
             buttonList.add(buttonSeanse);
             rowList.add(buttonList);
         }

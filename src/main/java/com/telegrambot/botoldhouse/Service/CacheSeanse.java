@@ -70,6 +70,15 @@ public class CacheSeanse {
         return null;
     }
 
+    public Long getIdByName(String name){
+        for(SeanseDateTimeName s : this.seansDTN){
+            if(s.getId() == id){
+                return s.getId();
+            }
+        }
+        return null;
+    }
+
     public int getCountSeansesByNameAndMonth(String name, int month){
         int count=0;
         for(SeanseDateTimeName s : this.seansDTN){

@@ -65,9 +65,10 @@ public class MessageHandler {
             SendMessage sendMessage = seanseService.getByMontPageble(monthTonum(inputText), chatId, 0);
             return sendMessage;
 
-        } else  if (cacheSeanse.ifExistByMonth(inputText.substring(0, inputText.length()-1)) & inputText.contains("_")) {
+        } else  if (cacheSeanse.ifExistByMonth(inputText.substring(0, inputText.length()-1)) && inputText.contains("_")) {
 
             SendMessage sendMessage = seanseService.getNameSensesInMonth(monthTonum(inputText.substring(0, inputText.length()-1)), chatId);
+            
             return sendMessage;
 
         } else {
