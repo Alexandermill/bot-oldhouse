@@ -1,0 +1,55 @@
+    <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Спектакли на 6 месяцев</title>
+  <script type = "text/javascript" src = "https://www.gstatic.com/charts/loader.js">
+  </script>
+  <script type = "text/javascript" th:inline="javascript">
+         google.charts.load('current', {packages: ['table']});
+      </script>
+</head>
+
+<body>
+
+
+<h1>Расписание спектаклей на 6 месяцев</h1>
+<div id = "container" style = "width: 750px; height: 600px; margin: 0 auto">
+</div>
+
+
+<script language = "JavaScript" th:inline="javascript">
+         function drawChart() {
+            // Define the chart to be drawn.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('string', 'Time');
+            data.addColumn('string', 'Name');
+            data.addColumn('string', 'Link');
+<!--             data.addColumn('string', 'Купить билет');-->
+            data.addRows([
+           /*[# th:each="row : ${seanses}"]*/
+              [  '[(${row.getDate})]', '[(${row.getTime})]', '[(${row.getName})]', '[(${row.getWebLink})]'],
+
+                /*[/]*/
+            ]);
+
+            var options = {
+               allowHtml: true,
+               showRowNumber: true,
+               width: '100%',
+               height: '100%'
+            };
+
+            var chart = new google.visualization.Table(document.getElementById('container'));
+
+            var formatter = new google.visualization.PatternFormat('<a href="{3}">{2}</a>');
+            formatter.format(data, [0,1,2,3],2);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0,1,2]);
+
+            chart.draw(view, options);
+         }
+         google.charts.setOnLoadCallback(drawChart);
+      </script>
+</body>
+</html>
