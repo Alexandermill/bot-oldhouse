@@ -13,10 +13,21 @@ public class SeanseDateTimeName {
     LocalTime time;
     String name;
 
+    @Override
+    public String toString() {
+        return "SeanseDateTimeName{" +
+                "id=" + id +
+                ", date=" + date +
+                ", time=" + time +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public SeanseDateTimeName() {
     }
 
     public SeanseDateTimeName(Long id, LocalDate date, LocalTime time, String name) {
+        this.id = id;
         this.date = date;
         this.time = time;
         this.name = name;

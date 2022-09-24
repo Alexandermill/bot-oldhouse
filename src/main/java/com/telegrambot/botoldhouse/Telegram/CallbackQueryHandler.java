@@ -22,10 +22,11 @@ public class CallbackQueryHandler {
     @Autowired
     CacheSeanse cacheSeanse;
 
-    public BotApiMethod<?> CallbackQueryAnswer (CallbackQuery callbackQuery) throws IOException {
+    public BotApiMethod<?> CallbackQueryAnswer (CallbackQuery callbackQuery) {
         String chatId = callbackQuery.getMessage().getChatId().toString();
         Integer messageId = callbackQuery.getMessage().getMessageId();
         String[] arrData = callbackQuery.getData().split("#>");
+
         if (arrData[0].equals(CalbackDataEnum.ALL_SEANSES.name())) {
             int page = Integer.parseInt(arrData[1]);
             int month = Integer.parseInt(arrData[2]);
@@ -35,14 +36,14 @@ public class CallbackQueryHandler {
         } else if (arrData[0].equals(CalbackDataEnum.GET_MSG.name())) {
             int page = Integer.parseInt(arrData[1]);
             int month = Integer.parseInt(arrData[2]);
-            String name = arrData[3];
+            String name = cacheSeanse.getNameById(Long.valueOf(arrData[3]));
             SendMessage sendMessage = seanseService.getMsgByMontAndNamePageble(month, chatId, name, page);
             return sendMessage;
 
         } else if (arrData[0].equals(CalbackDataEnum.ONE_SEANSE.name())) {
             int page = Integer.parseInt(arrData[1]);
             int month = Integer.parseInt(arrData[2]);
-            String name = arrData[3];
+            String name = cacheSeanse.getNameById(Long.valueOf(arrData[3]));
             return (seanseService.getEditMessage(month, page, chatId, name, messageId));
 
         } else if (callbackQuery.getData().equals(CalbackDataEnum.BY_NAME.name())){

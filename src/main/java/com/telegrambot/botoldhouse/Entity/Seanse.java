@@ -1,17 +1,16 @@
 package com.telegrambot.botoldhouse.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 public class Seanse {
     @Id
-    @GeneratedValue
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_gen")
+//    @SequenceGenerator(name="id_gen", sequenceName="article_seq")
     Long id;
+
     LocalDate date;
     LocalTime time;
     String name;
@@ -24,6 +23,18 @@ public class Seanse {
 
 
     public Seanse() {
+    }
+
+    public Seanse(Long id, LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink, String description, String adress) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.name = name;
+        this.description = description;
+        this.durattion = durattion;
+        this.payLink = payLink;
+        this.webLink = webLink;
+        this.adress = adress;
     }
 
     public Seanse(LocalDate date, LocalTime time, String name, String durattion, String payLink, String webLink, String description, String adress) {
@@ -103,5 +114,16 @@ public class Seanse {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Seanse{" +
+                "id=" + id +
+                ", date=" + date +
+                ", time=" + time +
+                ", name='" + name + '\'' +
+
+                '}';
     }
 }

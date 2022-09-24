@@ -50,17 +50,18 @@ public class InlineKeybords {
         InlineKeyboardButton buttonPrevios = new InlineKeyboardButton();
         InlineKeyboardButton buttonNull = new InlineKeyboardButton("   ");
         buttonNull.setCallbackData("null");
+        String id = String.valueOf(cacheSeanse.getIdByName(name));
 
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
         if (page != 0) {
             buttonPrevios.setText(" < " + page);
-            buttonPrevios.setCallbackData(prefix +"#>"+ String.valueOf(page -1 )+"#>"+String.valueOf(month)+"#>"+name);
+            buttonPrevios.setCallbackData(prefix +"#>"+ String.valueOf(page -1 )+"#>"+String.valueOf(month)+"#>"+id);
             buttonList.add(buttonPrevios);
         } else buttonList.add(buttonNull);
 
         if (next) {
             buttonNext.setText((page+2) + " > ");
-            buttonNext.setCallbackData(prefix +"#>"+ String.valueOf(page +1 )+"#>"+String.valueOf(month)+"#>"+name);
+            buttonNext.setCallbackData(prefix +"#>"+ String.valueOf(page +1 )+"#>"+String.valueOf(month)+"#>"+id);
             buttonList.add(buttonNext);
         } else buttonList.add(buttonNull);
 
@@ -77,13 +78,13 @@ public class InlineKeybords {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         int page = 0;
 
+
         for (int i = 0; i < seansesName.size(); i++) {
+            String id = String.valueOf(cacheSeanse.getIdByName(seansesName.get(i)));
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             InlineKeyboardButton buttonSeanse = new InlineKeyboardButton(seansesName.get(i)+"  "
                                                 +cacheSeanse.getCountSeansesByNameAndMonth(seansesName.get(i), month));
-            // buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + seansesName.get(i).toString());
-            buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + "ПУТЕШЕСТВИЕ / ИСХОДНАЯ ТОЧ");
-            System.out.println("\n\n============================= CalbackDataEnum.GET_MSG.name() "+ CalbackDataEnum.GET_MSG.name());
+            buttonSeanse.setCallbackData(CalbackDataEnum.GET_MSG.name() + "#>" + page + "#>" + month +"#>" + id);
             buttonList.add(buttonSeanse);
             rowList.add(buttonList);
         }

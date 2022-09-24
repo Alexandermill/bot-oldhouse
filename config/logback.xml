@@ -51,7 +51,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.telegrambot.botoldhouse.Telegram.OldHouseBot" level="DEBUG" additivity="false">
+    <logger name="com.telegrambot.botoldhouse.Telegram.OldHouseBot" level="info" additivity="false">
         <appender-ref ref="FILE-AUDIT" />
     </logger>
 
@@ -72,7 +72,7 @@
 
 
     <root level="debug">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE-AUDIT" />
     </root>
 
 </configuration>

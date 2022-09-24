@@ -42,6 +42,7 @@ public class ParseToSeanse {
 
     public List<Seanse> getFullAfisha() throws IOException {
         List<Seanse> seanses = new ArrayList<>();
+        Long id = 1L;
 
         String month = "";
 
@@ -90,8 +91,8 @@ public class ParseToSeanse {
 
                         byte[] byteDesc = desc.getBytes(StandardCharsets.UTF_8);
                         String descUTF8 = new String(byteDesc, Charsets.UTF_8);
-
-                        Seanse seanse = new Seanse(date, time, name,  duration, payLink, webLink, descUTF8, adress);
+                        id++;
+                        Seanse seanse = new Seanse(id, date, time, name,  duration, payLink, webLink, descUTF8, adress);
                         logger.debug("Добавляем в базу: {} {} {}", seanse.getDate(), seanse.getTime(), seanse.getName());
                         seanses.add(seanse);
 
@@ -99,7 +100,8 @@ public class ParseToSeanse {
                 }
         }
 
-            return seanses;
+        id = 1L;
+        return seanses;
 
     }
 

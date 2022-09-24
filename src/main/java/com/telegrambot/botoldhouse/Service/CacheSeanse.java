@@ -71,8 +71,9 @@ public class CacheSeanse {
     }
 
     public Long getIdByName(String name){
+
         for(SeanseDateTimeName s : this.seansDTN){
-            if(s.getId() == id){
+            if(s.getName().equals(name)){
                 return s.getId();
             }
         }

@@ -33,7 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/db/**").hasAnyRole("ADMIN")
+                .antMatchers("/h2-console/").hasAnyRole("ADMIN")
                 .antMatchers("/**").permitAll()
+                .and().csrf().ignoringAntMatchers("/h2-console/**")
+                .and().headers().frameOptions().sameOrigin()
                 .and()
                 .csrf().disable()
                 .formLogin();

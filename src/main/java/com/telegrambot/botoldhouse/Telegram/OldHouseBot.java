@@ -1,7 +1,6 @@
 package com.telegrambot.botoldhouse.Telegram;
 
 
-import com.telegrambot.botoldhouse.Service.SeanseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ public class OldHouseBot extends SpringWebhookBot {
     private String botUsername;
     private String botToken;
 
-    @Autowired
-    SeanseService seanseService;
 
     @Autowired
     MessageHandler messageHandler;
@@ -70,7 +67,7 @@ public class OldHouseBot extends SpringWebhookBot {
 
                 userLogger.debug("User {}, {}, нажал кнопку {}", update.getCallbackQuery().getMessage().getChatId(),
                         update.getCallbackQuery().getMessage().getChat().getFirstName(),
-                        update.getCallbackQuery().getMessage().getReplyMarkup().getKeyboard().get(0).get(0).getText());
+                        update.getCallbackQuery().getData());
 
                 return callbackQueryHandler.CallbackQueryAnswer(update.getCallbackQuery());
             } else if (update.getMessage() != null && update.getMessage().getText() != null) {
