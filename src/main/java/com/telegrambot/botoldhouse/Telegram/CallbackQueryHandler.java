@@ -26,6 +26,7 @@ public class CallbackQueryHandler {
         String chatId = callbackQuery.getMessage().getChatId().toString();
         Integer messageId = callbackQuery.getMessage().getMessageId();
         String[] arrData = callbackQuery.getData().split("#>");
+        
 
         if (arrData[0].equals(CalbackDataEnum.ALL_SEANSES.name())) {
             int page = Integer.parseInt(arrData[1]);
