@@ -27,7 +27,6 @@ public class CallbackQueryHandler {
         Integer messageId = callbackQuery.getMessage().getMessageId();
         String[] arrData = callbackQuery.getData().split("#>");
         
-
         if (arrData[0].equals(CalbackDataEnum.ALL_SEANSES.name())) {
             int page = Integer.parseInt(arrData[1]);
             int month = Integer.parseInt(arrData[2]);
