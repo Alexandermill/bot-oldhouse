@@ -51,7 +51,7 @@ public class MessageHandler {
         String inputText = message.getText();
         Map<String, String> roles = new HashMap<>();
         roles.put(adminChatId, "admin");
-        
+        System.out.println("\n ============= "+inputText.substring(0, 8)+"====");
 
         userLogger.debug("User {}, {}, {} ввел {}",
                 message.getChatId(),
@@ -82,12 +82,14 @@ public class MessageHandler {
 
         } else if (inputText.equals("/support")) {
 
-            SendMessage sendMessage = getSupportMessage("chatId");
+            SendMessage sendMessage = getSupportMessage(chatId);
             return sendMessage;
 
         } else if (inputText.substring(0, 8).equals("/support")) {
+            System.out.println("in method support");
 
             SendMessage sendMessage = new SendMessage("-1001511918133", inputText);
+
             return sendMessage;
 
         } else if (roles.get(chatId).equals("admin") && inputText.substring(0, 5).equals("/mess")) {
@@ -108,7 +110,6 @@ public class MessageHandler {
     private SendMessage getSupportMessage(String chatId) {
         SendMessage sendMessage = new SendMessage(chatId, MSG_Enum.SUPPORT_MSG.getMsg());
         sendMessage.enableHtml(true);
-        sendMessage.setReplyMarkup(inlineKeybords.getStartInlineButtons());
         return sendMessage;
     }
 
