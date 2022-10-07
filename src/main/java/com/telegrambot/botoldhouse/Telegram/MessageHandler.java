@@ -5,8 +5,8 @@ import com.telegrambot.botoldhouse.Service.AdminService;
 import com.telegrambot.botoldhouse.Service.CacheSeanse;
 import com.telegrambot.botoldhouse.Service.SeanseService;
 import com.telegrambot.botoldhouse.Telegram.Keybords.InlineKeybords;
-import com.telegrambot.botoldhouse.Telegram.Keybords.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.telegrambot.botoldhouse.Telegram.OldHouseBot.userLogger;
 
@@ -35,6 +37,9 @@ public class MessageHandler {
     @Autowired
     private AdminService adminService;
 
+    @Value("${telegram.admin-chat-id}")
+    private String adminChatId;
+
     private LocalDate ld = LocalDate.now();
     private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
@@ -44,6 +49,9 @@ public class MessageHandler {
 
         String chatId = message.getChatId().toString();
         String inputText = message.getText();
+        Map<String, String> roles = new HashMap<>();
+        roles.put(adminChatId, "admin");
+        
 
         userLogger.debug("User {}, {}, {} ввел {}",
                 message.getChatId(),
@@ -70,6 +78,13 @@ public class MessageHandler {
 
             SendMessage sendMessage = seanseService.getNameSensesInMonth(monthTonum(inputText.substring(0, inputText.length()-1)), chatId);
             
+            return sendMessage;
+
+        }else if (roles.get(chatId).equals("admin") && inputText.substring(0, 5).equals("/mess")) {
+            String[] messageArray = inputText.substring(6).split(";");
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(messageArray[0]);
+            sendMessage.setText(messageArray[1]);
             return sendMessage;
 
         } else {
