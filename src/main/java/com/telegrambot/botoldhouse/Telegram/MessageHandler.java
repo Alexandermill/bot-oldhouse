@@ -51,8 +51,7 @@ public class MessageHandler {
         String inputText = message.getText();
         Map<String, String> roles = new HashMap<>();
         roles.put(adminChatId, "admin");
-        System.out.println("\n ============= "+inputText.substring(0, 8)+"====");
-
+        
         userLogger.debug("User {}, {}, {} ввел {}",
                 message.getChatId(),
                 message.getChat().getFirstName(),
@@ -64,6 +63,7 @@ public class MessageHandler {
 
         if (inputText == null) {
             throw new IllegalArgumentException();
+
         } else if (inputText.equals("/start")) {
 
             SendMessage sendMessage = getStartMessage(chatId);
@@ -85,8 +85,7 @@ public class MessageHandler {
             SendMessage sendMessage = getSupportMessage(chatId);
             return sendMessage;
 
-        } else if (inputText.substring(0, 8).equals("/support")) {
-            System.out.println("in method support");
+        } else if (inputText.length() > 8 && inputText.substring(0, 8).equals("/support")) {
 
             SendMessage sendMessage = new SendMessage("-1001511918133", inputText);
 
