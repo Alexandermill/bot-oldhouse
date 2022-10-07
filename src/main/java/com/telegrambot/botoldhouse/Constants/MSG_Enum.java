@@ -16,7 +16,7 @@ public enum MSG_Enum {
             "Для выбора месяца - используйте клавиатуру!\n" +
             "Для возврата в выбор режима нажмите /start"),
     MONTHLY_MSG(""),
-    ALL_SEANSES_MSG("");
+    ALL_SEANSES_MSG(""), SUPPORT_MSG("чтобы отправить сообщение админу введите \"/support текст сообщения\"");
 
     private final String msg;
 
