@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.telegrambot</groupId>
 	<artifactId>bot-oldhouse</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.3.1</version>
 	<name>bot-oldhouse</name>
 	<description>Old House Theatre Telegram bot</description>
 	<properties>
