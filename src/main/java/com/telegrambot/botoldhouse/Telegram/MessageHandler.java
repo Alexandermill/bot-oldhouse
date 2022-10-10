@@ -40,6 +40,12 @@ public class MessageHandler {
     @Value("${telegram.admin-chat-id}")
     private String adminChatId;
 
+    @Value("${telegram.support-chat-id}")
+    private String supportChatId;
+
+    @Value("${telegram.bot-name}")
+    private String botName;
+
     private LocalDate ld = LocalDate.now();
     private String[] months = new String[]{"", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
             "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",};
@@ -49,6 +55,9 @@ public class MessageHandler {
 
         String chatId = message.getChatId().toString();
         String inputText = message.getText();
+        if(chatId.substring(0, 1).equals("-")){
+            inputText = message.getText().replaceAll(botName, "");
+        }
         Map<String, String> roles = new HashMap<>();
         roles.put(adminChatId, "admin");
         
@@ -87,11 +96,11 @@ public class MessageHandler {
 
         } else if (inputText.length() > 8 && inputText.substring(0, 8).equals("/support")) {
 
-            SendMessage sendMessage = new SendMessage("-1001511918133", inputText);
+            SendMessage sendMessage = new SendMessage(supportChatId, inputText);
 
             return sendMessage;
 
-        } else if (roles.get(chatId).equals("admin") && inputText.substring(0, 5).equals("/mess")) {
+        } else if (roles.get(chatId) != null && roles.get(chatId).equals("admin") && inputText.substring(0, 5).equals("/mess")) {
             String[] messageArray = inputText.substring(6).split(";");
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(messageArray[0]);
