@@ -81,7 +81,6 @@ public class OldHouseBot extends SpringWebhookBot {
                     "Попробуйте воспользоваться клавиатурой");
         } catch (Exception e) {
             logger.debug(e.toString());
-            System.out.println(e);
             return new SendMessage(update.getMessage().getChatId().toString(),
                     "Что то пошло не так");
         }

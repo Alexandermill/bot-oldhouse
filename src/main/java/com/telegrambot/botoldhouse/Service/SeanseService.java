@@ -86,7 +86,7 @@ public class SeanseService {
     }
 
     public SendMessage getMsgByMontAndNamePageble(int month, String chatId, String name, int page){
-        SendMessage sendMessage = new SendMessage();
+        SendMessage sendMessage;
         int messageInPage = 1;
         Seanse seanse = seanseRepository.findSeanseByMonthAdNamePageble(month, name, PageRequest.of(page, messageInPage));
         sendMessage = seanseToMessage(seanse, page);
@@ -104,34 +104,6 @@ public class SeanseService {
         List<String> seansesName = seanseRepository.findSeansesNameByMonth(month);
         sendMessage.setReplyMarkup(inlineKeybords.getInlineMonnthKeybord(seansesName, month));
         return sendMessage;
-    }
-
-
-
-
-    /*
-    Нужен для получения Продолжительности в формате HH:MM
-    На сайте продолжительность могут написать как угодно
-     */
-    public String getTimeString(String str) {
-        if (!(str == null || str.equals(""))) {
-
-            String[] arr = str.trim().split("[^\\d]+");
-
-            if (arr.length > 1) {
-                String result = (arr[0] + ":" + arr[1]);
-                return result;
-            } else if (arr.length == 1 & str.contains("минут")) {
-                if (Integer.parseInt(arr[0]) >= 60) {
-                    int minutes = Integer.parseInt(arr[0]) % 60;
-                    int hours = Integer.parseInt(arr[0]) / 60;
-                    return (Integer.toString(hours) + ":" + Integer.toString(minutes));
-                } else return ("0:" + arr[0]);
-            } else if (arr.length == 1 & str.contains("час")) {
-                return (arr[0] + ":00");
-            }
-        }
-        return "";
     }
 
     private boolean ifNotfinalPage(int month, int page){
@@ -166,7 +138,7 @@ public class SeanseService {
     }
 
     private SendMessage seanseToMessage(Seanse seanse, int page){
-        String dur = getTimeString(seanse.getDurattion());
+        String dur = seanse.getDurattion();
         String clock = EmojiParser.parseToUnicode("\uD83D\uDD70");
         String calendar = EmojiParser.parseToUnicode("\uD83D\uDDD3");
         String payemoji = EmojiParser.parseToUnicode("\uD83D\uDCB3");

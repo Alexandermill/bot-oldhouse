@@ -58,7 +58,7 @@
     <logger name="telegram_bot" level="debug" additivity="false">
         <appender-ref ref="FILE-USER" />
     </logger>
-    <logger name="org.hibernate.SQL" level="DEBUG">
+    <logger name="org.hibernate.SQL" level="debug">
         <!-- <appender-ref ref="FILE-AUDIT"/> -->
     </logger>
     <!-- <logger name="org.hibernate.type" level="TRACE">
@@ -71,7 +71,7 @@
     <logger name="com.zaxxer.hikari.HikariDataSource" level="ERROR"/>
 
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="CONSOLE" />
     </root>
 

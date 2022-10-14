@@ -62,9 +62,13 @@ public class ParseToSeanse {
                         dayOfMonth = e.select("span").text();
                     } else {
                         Document aboutSeanse = Jsoup.connect(root + "/" + e.select("h4 > a").attr("href").substring(1)).get();
-                        if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
-                            duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
-                        } else duration = "";
+//                        if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
+//                            duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
+//                        } else duration = "";
+
+                        String parseDuration = aboutSeanse.getElementsByClass("right-box").select("li:contains(продолжительность) > span").text();
+                        duration = getParsingTime(parseDuration);
+
                         description = aboutSeanse.select("p[style]").text();
 
                         String datestr = (dayOfMonth + " "+ month+" "+ ld.getYear());
@@ -141,9 +145,8 @@ public class ParseToSeanse {
     private String getParsingTime(String text){
         String str = text.toLowerCase();
         String[] arr = str.trim().split("[^\\d&^,)]+");
-        
+
         for (int i = 0; i < arr.length; i++) {
-            System.out.println(arr[i]);
         }
 
         if (str == null || str.equals("")){
@@ -151,6 +154,9 @@ public class ParseToSeanse {
         }
 
         if(arr.length > 1 && str.contains(":")){
+            if(arr[0].equals("")){
+                arr[0] = "0";
+            }
             return String.valueOf(arr[0])+":"+String.valueOf(arr[1]);
         }
 
@@ -161,7 +167,7 @@ public class ParseToSeanse {
                 return hours +":"+minutes;
             }
             return "0:" + arr[0];
-      
+
         }
 
         if (arr.length == 1 && str.contains("час")){
@@ -171,7 +177,6 @@ public class ParseToSeanse {
                 if (hourArray.length > 1){
                     Double minutes = Double.parseDouble("0."+hourArray[1])*60;
                     int min = minutes.intValue();
-                    System.out.println("min - "+min);
                     return hourArray[0] + ":"+min;
                 }
             }
@@ -181,7 +186,6 @@ public class ParseToSeanse {
                 if (hourArray.length > 1){
                     Double minutes = Double.parseDouble("0."+hourArray[1])*60;
                     int min = minutes.intValue();
-                    System.out.println("min - "+min);
                     return hourArray[0] + ":"+min;
                 }
             }
@@ -190,7 +194,6 @@ public class ParseToSeanse {
         }
 
         return "";
-        
-    }
 
+    }
 }
