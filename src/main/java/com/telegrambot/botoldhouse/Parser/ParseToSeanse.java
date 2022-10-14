@@ -138,4 +138,59 @@ public class ParseToSeanse {
         return jsonStr;
     }
 
+    private String getParsingTime(String text){
+        String str = text.toLowerCase();
+        String[] arr = str.trim().split("[^\\d&^,)]+");
+        
+        for (int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+
+        if (str == null || str.equals("")){
+            return "";
+        }
+
+        if(arr.length > 1 && str.contains(":")){
+            return String.valueOf(arr[0])+":"+String.valueOf(arr[1]);
+        }
+
+        if(arr.length == 1 && str.contains("минут")){
+            if(Integer.parseInt(arr[0]) >= 60){
+                int minutes = Integer.parseInt(arr[0]) % 60;
+                int hours = Integer.parseInt(arr[0]) / 60;
+                return hours +":"+minutes;
+            }
+            return "0:" + arr[0];
+      
+        }
+
+        if (arr.length == 1 && str.contains("час")){
+
+            if(arr[0].contains(",")){
+                String[] hourArray = arr[0].split(",");
+                if (hourArray.length > 1){
+                    Double minutes = Double.parseDouble("0."+hourArray[1])*60;
+                    int min = minutes.intValue();
+                    System.out.println("min - "+min);
+                    return hourArray[0] + ":"+min;
+                }
+            }
+
+            if(arr[0].contains(".")){
+                String[] hourArray = arr[0].split(".");
+                if (hourArray.length > 1){
+                    Double minutes = Double.parseDouble("0."+hourArray[1])*60;
+                    int min = minutes.intValue();
+                    System.out.println("min - "+min);
+                    return hourArray[0] + ":"+min;
+                }
+            }
+
+            return arr[0] + ":00";
+        }
+
+        return "";
+        
+    }
+
 }
