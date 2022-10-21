@@ -62,9 +62,13 @@ public class ParseToSeanse {
                         dayOfMonth = e.select("span").text();
                     } else {
                         Document aboutSeanse = Jsoup.connect(root + "/" + e.select("h4 > a").attr("href").substring(1)).get();
-                        if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
-                            duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
-                        } else duration = "";
+//                        if (aboutSeanse.select("div.right-box > ul").first().select("span").size() > 1){
+//                            duration = aboutSeanse.select("div.right-box > ul").first().select("span").get(1).text();
+//                        } else duration = "";
+
+                        String parseDuration = aboutSeanse.getElementsByClass("right-box").select("li:contains(продолжительность) > span").text();
+                        duration = getParsingTime(parseDuration);
+
                         description = aboutSeanse.select("p[style]").text();
 
                         String datestr = (dayOfMonth + " "+ month+" "+ ld.getYear());
@@ -138,4 +142,58 @@ public class ParseToSeanse {
         return jsonStr;
     }
 
+    private String getParsingTime(String text){
+        String str = text.toLowerCase();
+        String[] arr = str.trim().split("[^\\d&^,)]+");
+
+        for (int i = 0; i < arr.length; i++) {
+        }
+
+        if (str == null || str.equals("")){
+            return "";
+        }
+
+        if(arr.length > 1 && str.contains(":")){
+            if(arr[0].equals("")){
+                arr[0] = "0";
+            }
+            return String.valueOf(arr[0])+":"+String.valueOf(arr[1]);
+        }
+
+        if(arr.length == 1 && str.contains("минут")){
+            if(Integer.parseInt(arr[0]) >= 60){
+                int minutes = Integer.parseInt(arr[0]) % 60;
+                int hours = Integer.parseInt(arr[0]) / 60;
+                return hours +":"+minutes;
+            }
+            return "0:" + arr[0];
+
+        }
+
+        if (arr.length == 1 && str.contains("час")){
+
+            if(arr[0].contains(",")){
+                String[] hourArray = arr[0].split(",");
+                if (hourArray.length > 1){
+                    Double minutes = Double.parseDouble("0."+hourArray[1])*60;
+                    int min = minutes.intValue();
+                    return hourArray[0] + ":"+min;
+                }
+            }
+
+            if(arr[0].contains(".")){
+                String[] hourArray = arr[0].split(".");
+                if (hourArray.length > 1){
+                    Double minutes = Double.parseDouble("0."+hourArray[1])*60;
+                    int min = minutes.intValue();
+                    return hourArray[0] + ":"+min;
+                }
+            }
+
+            return arr[0] + ":00";
+        }
+
+        return "";
+
+    }
 }
