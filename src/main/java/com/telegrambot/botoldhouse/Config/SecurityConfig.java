@@ -1,5 +1,6 @@
 package com.telegrambot.botoldhouse.Config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Value("${admin.password}")
+    String adminpswd;
+    @Value("${user.password}")
+    String userpswd;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
@@ -21,11 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("admin")
-                .password("flash4")
+                .password(adminpswd)
                 .authorities("ROLE_ADMIN")
                 .and()
                 .withUser("user")
-                .password("user44")
+                .password(userpswd)
                 .authorities("ROLE_USER");
     }
 
