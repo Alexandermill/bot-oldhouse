@@ -146,6 +146,7 @@ public class SeanseService {
         String webLink;
         String pay;
         String palLink;
+        String time = "";
         if (seanse.getPayLink().isBlank()) {
             pay = "нет онлайн билетов";
             palLink = "";
@@ -160,10 +161,14 @@ public class SeanseService {
             webLink = seanse.getWebLink();
         }
 
+        if (seanse.getTime() != null ){
+            time = seanse.getTime().toString();
+        }
+
         String text = (
                 "#"+page+"     "+calendar + " " + "<b>"+ seanse.getDate().format(dtf)+"</b>"
                 + "  " + seanse.getDate().format(dtfWeekDay) + "\n\n"
-                +clock +" <i> начало </i> "+ seanse.getTime().toString() +"  <i>окончание</i> "+getEndTime(dur,seanse.getTime())
+                +clock +" <i> начало </i> "+ time +"  <i>окончание</i> "+getEndTime(dur,seanse.getTime())
                 + "\n\n" + "Спектакль: " + "<b>"+seanse.getName() +"</b>"  + "\n"
                 +seanse.getAdress()+ "\n"
                 + "Продолжительность: " + dur+"\n\n" + payemoji
