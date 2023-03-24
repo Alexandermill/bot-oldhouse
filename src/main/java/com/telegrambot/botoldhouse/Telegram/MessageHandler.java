@@ -96,6 +96,9 @@ public class MessageHandler {
 
         } else if (inputText.length() > 8 && inputText.substring(0, 8).equals("/support")) {
 
+            String userInfo = "User @" + message.getFrom().getUserName() + " send: ";
+
+            inputText = userInfo + inputText;
             SendMessage sendMessage = new SendMessage(supportChatId, inputText);
 
             return sendMessage;
